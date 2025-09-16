@@ -1,6 +1,6 @@
-# Curso de Machine Learning
+# Curs de Sistemes operatius
 
-Este repositorio contiene el material del curso de Machine Learning desarrollado por Mireia Consarnau.
+Aquest repositori conté material del curs de Sistemes Operatius desarrollat per Joan Bertomeu.
 
 ## Contenido
 
