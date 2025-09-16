@@ -1,9 +1,9 @@
 ---
 layout: default
-title: "Curso de Machine Learning"
+title: "Curs de Sistemes Operatius"
 ---
 
-Este repositorio contiene el material del curso de Machine Learning desarrollado por Mireia Consarnau.
+Aquest repositori conté material del curs de Sistemes Operatius desarrollat per Joan Bertomeu.
 
 - Índice y enlaces a las unidades del curso.
 - Recursos en formato PDF, vídeos, y Google Colab.
