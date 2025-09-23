@@ -47,6 +47,8 @@ Ara ja estem dintre del menú de particions, podem crear una nova taula de parti
 
 Un cop ja tenim les particions creades, ja podrem definir el nostre nom d'usuari i la nostra contrasenya, jo li he posat Joan, però cadascú pot posar-se el nom que vulgui
 
+<img width="828" height="627" alt="8" src="https://github.com/user-attachments/assets/3aa2f2c8-f0e3-46fb-a494-c2846aabb185" />
+
 ***Hivernar**: Aquest concepte l'he tingut que buscar perquè les meves fonts de recerca insistien molt que en el cas d'hivernació, la swap hauria de ser bastant alta. Hivernar serveix per a apagar l'ordinador, però la informació de la RAM en comptes d'eliminar-se, es guarda dintre del disc i s'apaga per complet, llavors, quan tornem a enjegar l'ordinador continúes exactament on ho havies deixat. 
 
 ## Llicènciament.
