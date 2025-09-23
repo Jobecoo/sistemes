@@ -52,11 +52,19 @@ Un cop ja tenim les particions creades, ja podrem definir el nostre nom d'usuari
 ***Hivernar**: Aquest concepte l'he tingut que buscar perquè les meves fonts de recerca insistien molt que en el cas d'hivernació, la swap hauria de ser bastant alta. Hivernar serveix per a apagar l'ordinador, però la informació de la RAM en comptes d'eliminar-se, es guarda dintre del disc i s'apaga per complet, llavors, quan tornem a enjegar l'ordinador continúes exactament on ho havies deixat. 
 
 ## Llicènciament.
-Explicar la llicència del SO Ubuntu 
+Ubuntu, en la seva major part, té un llicenciament GPL és a dir _General Public License_. Té un ús gratuït, es pot modificar al teu gust, pots redistribuir-lo amb les teves modificacions, inclús el codi font d'Ubuntu ha d'estar públicat. En cas de fer una redistribució d'un Ubuntu modificat, no podem donar-li el nom d'ubuntu, però no podrem obtenir beneficis econòmics gràcies a aquest.
+
 ## Gestors d'arrencada per a instal·lacions duals.
 ## Punts de restauració.
 ## Configuració de la xarxa
-Nat, Adaptador pont, xarxa interna, xarxa nat. Explicar per què xarxa nat i no una altra. 
+Quan creem una màquina virtual, hem d'establir un tipus de xarxa, nosaltres explicarem els 4 més importants i quina és el més recomanable per a aquest tipus de pràctiques. 
+
+- **NAT**: La màquina comparteix connexió directa amb el nostre ordinador. Però no tenim connexió a xarxa
+
+- **Adaptador Pont**: La màquina es comporta com un equip més dintre de la xarxa, però és molt incòmoda perquè no te una IP fixa i pot canviar.
+
+- **Xarxa NAT**:La màquina només pot comunicar-se amb altres màquines que estiguin a la mateixa xarxa interna. 
+
 ## Comandes generals i instal·lacions.
 
 Modificar llicencia github a la cc 4.0 fet
