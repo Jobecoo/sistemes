@@ -31,7 +31,7 @@ Ara ja estem dintre del menú de particions, podem crear una nova taula de parti
 
 <img width="827" height="623" alt="6" src="https://github.com/user-attachments/assets/863d62df-70ed-4859-b28b-542fceb6a418" />
 
-Per a la taula de particions, podem tenir diverses particions, ara, us explicaré les més bàsiques i necessàries:
+És molt important saber que per a crear una partició, hem de seleccionar el botó de "+" en la taula de particions. Podem tenir diverses, ara, us explicaré les més bàsiques i necessàries:
 
 **/ (arrel)**: Aquesta és la part que conté tot el sistema operatiu, on guardem tots els arxius. La mesura recomanada per a l'arrel és entre uns 15-30 GB de memòria, depenent del ús que li volguem donar. Com que no hem de fer cap instal·lació pesada, de moment nosaltres li establirem uns 20 GB
 
@@ -41,8 +41,11 @@ Per a la taula de particions, podem tenir diverses particions, ara, us explicar�
 
 **swap**: La swap realment sí es recomana, normalment alrededor d'uns 4-8 GB. Però si hem d'hivernar* (que no és el nostre cas) s'hauría de posar una swap més gran que la memòria RAM. La swap serveix com un coixí per a la memòria RAM del nostre equip utilitzant la swap per quan la nostra RAM s'acaba.
 
-**efi**: 
+**efi**: És necessària si has d'arrancar el sistema amb UEFI, es recomana uns 300-600 MB d'emmagatzematge. 
 
+<img width="833" height="625" alt="7" src="https://github.com/user-attachments/assets/0d6c1850-f075-4cb1-8450-eecfa5ee9745" />
+
+Un cop ja tenim les particions creades, ja podrem definir el nostre nom d'usuari i la nostra contrasenya, jo li he posat Joan, però cadascú pot posar-se el nom que vulgui
 
 ***Hivernar**: Aquest concepte l'he tingut que buscar perquè les meves fonts de recerca insistien molt que en el cas d'hivernació, la swap hauria de ser bastant alta. Hivernar serveix per a apagar l'ordinador, però la informació de la RAM en comptes d'eliminar-se, es guarda dintre del disc i s'apaga per complet, llavors, quan tornem a enjegar l'ordinador continúes exactament on ho havies deixat. 
 
