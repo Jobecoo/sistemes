@@ -68,8 +68,9 @@ Per a que el sistema Windows no ens doni problemes amb el sistema de particions,
 
 <img width="1060" height="616" alt="3" src="https://github.com/user-attachments/assets/06be9344-70db-4a2a-bb80-874ddffba5fa" />
 
-
 Un cop arrencada la màquina observem que no se'ns dona la opció de arrencar l'ubuntu, sinó que s'obre Windows directament, a punt per a preparar-lo per a la seva instal·lació. Seleccionem l'idioma i "Instalar Ahora"
+
+
 
 ## Punts de restauració.
 ## Configuració de la xarxa
