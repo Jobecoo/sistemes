@@ -55,6 +55,22 @@ Un cop ja tenim les particions creades, ja podrem definir el nostre nom d'usuari
 Ubuntu, en la seva major part, té un llicenciament GPL és a dir _General Public License_. Té un ús gratuït, es pot modificar al teu gust, pots redistribuir-lo amb les teves modificacions, inclús el codi font d'Ubuntu ha d'estar públicat. En cas de fer una redistribució d'un Ubuntu modificat, no podem donar-li el nom d'ubuntu, però no podrem obtenir beneficis econòmics gràcies a aquest.
 
 ## Gestors d'arrencada per a instal·lacions duals.
+En aquest apartat del sprint realitzarem dues instal·lacions duals, una amb un sol disc, i una altra dual amb dos discos. Realment és molt més còmode tenir dos discos, un per a cada sistema operatiu, perquè aixi no desaprofitem espai de cap disc.
+
+### Instal·lació dual amb un sol disc
+Començarem amb un sol disc, farem que cada vegada que arranqui la màquina virtual, puguem seleccionar amb el GRUB si arrencar amb Windows o amb Ubuntu, jo utilitzaré un ubuntu 22 i un Windows 10 enterprise. En teoría, el senzill és primer instal·lar el sistema operatiu Windows, i després Ubuntu, però nosaltres ho farem al revés, ja que, sinó no té gràcia i se'ns podria donar el cas de només tenir un disc amb un Ubuntu ja instal·lat.
+
+Primer de tot, necessitarem una màquina creada de Ubuntu 22 que funcioni correctament. I col·locarem la ISO del Windows.
+
+<img width="577" height="397" alt="1" src="https://github.com/user-attachments/assets/17bc5dc0-9ee4-4510-b154-980ef281481c" />
+
+Per a que el sistema Windows no ens doni problemes amb el sistema de particions, perquè Ubuntu utilitza GPT, però Windows vol MBR. Llavors haurem de marcar la casella de UEFI dintre de la nostra màquina. 
+
+<img width="1060" height="616" alt="3" src="https://github.com/user-attachments/assets/06be9344-70db-4a2a-bb80-874ddffba5fa" />
+
+
+Un cop arrencada la màquina observem que no se'ns dona la opció de arrencar l'ubuntu, sinó que s'obre Windows directament, a punt per a preparar-lo per a la seva instal·lació. Seleccionem l'idioma i "Instalar Ahora"
+
 ## Punts de restauració.
 ## Configuració de la xarxa
 Quan creem una màquina virtual, hem d'establir un tipus de xarxa, nosaltres explicarem els 4 més importants i quina és el més recomanable per a aquest tipus de pràctiques. 
