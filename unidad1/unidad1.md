@@ -68,7 +68,23 @@ Per a que el sistema Windows no ens doni problemes amb el sistema de particions,
 
 <img width="1060" height="616" alt="3" src="https://github.com/user-attachments/assets/06be9344-70db-4a2a-bb80-874ddffba5fa" />
 
-Un cop arrencada la màquina observem que no se'ns dona la opció de arrencar l'ubuntu, sinó que s'obre Windows directament, a punt per a preparar-lo per a la seva instal·lació. Seleccionem l'idioma i "Instalar Ahora"
+Un cop arrencada la màquina observem que no se'ns dona la opció de arrencar l'ubuntu, sinó que s'obre Windows directament, a punt per a preparar-lo per a la seva instal·lació. Seleccionem l'idioma i "Instalar Ahora". Després d'això seleccionem uns instal·lació personalitzada perquè voldrem posar el sistema Windows en una partició en específic.
+
+<img width="640" height="484" alt="2" src="https://github.com/user-attachments/assets/f4328266-2297-49f4-99cd-8746589c2d60" />
+
+Seleccionem que s'instal·li windows a la partició 6, que es la que haviem deixat 40 GB lliures anteriorment.
+
+<img width="642" height="479" alt="4" src="https://github.com/user-attachments/assets/b3b9f8dc-65a5-48b5-93f5-298885cd17e5" />
+
+Ara esperem a que s'instal·li el sistema operatiu Windows
+
+<img width="645" height="479" alt="5" src="https://github.com/user-attachments/assets/1b974919-77b3-4b1e-be04-00b91347afce" />
+
+En haver instal·lat el Windows, se'ns demanarà que fessim una configuració bàsica (Usuari, contrasenya, si volem donar accés a la ubicació...) tot aixo al gust de l'usuari. I després d'un poc temps, ja tindrem el windows llest. 
+
+<img width="1024" height="857" alt="6" src="https://github.com/user-attachments/assets/fb3dcbfa-c41c-4c26-97da-dfb237155907" />
+
+Ara, comença el problema "On és el meu ubuntu?" "Per què no em deixa triar Ubuntu?" És senzill, la resposta és que Windows es carrega el grub del Ubuntu, però es pot solucionar, en iniciar la màquina premem repetidament ESC/F12 i se'ns obrirà un menú.
 
 
 
@@ -87,9 +103,3 @@ Quan creem una màquina virtual, hem d'establir un tipus de xarxa, nosaltres exp
 D'aquestes 4 opcions, la més òptima és la Xarxa NAT, degut a que podem instal·lar i actualitzar paquets quan vulguem (Tenim connexió a xarxa), també tenim connexió directa al nostre ordinador, i a més gràcies a això no exposem la màquina a la LAN de la nostra xarxa. A part de tot això, també l'escollim perquè la IP es pot fer fixa, i a mi em convé bastant perquè treballo amb un disc que te ubuntu instal·lat, i cada dia puc estar a un ordinador diferent, en cas de que no tingues una IP fixa (Adaptador Pont) la IP canviaria en qualsevol moment. 
 
 ## Comandes generals i instal·lacions.
-
-Modificar llicencia github a la cc 4.0 fet
-A l'apartat de llicenciament de l'esprint 1 parlar de la llicencia d'ubuntu 
-Crear una maquina virtual i explicar la seva configuracio
-Instal·lar SO Ubuntu i decidir particions en captures
-Redactar al github
