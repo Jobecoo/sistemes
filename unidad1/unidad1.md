@@ -63,7 +63,11 @@ Quan creem una màquina virtual, hem d'establir un tipus de xarxa, nosaltres exp
 
 - **Adaptador Pont**: La màquina es comporta com un equip més dintre de la xarxa, però és molt incòmoda perquè no te una IP fixa i pot canviar.
 
-- **Xarxa NAT**:La màquina només pot comunicar-se amb altres màquines que estiguin a la mateixa xarxa interna. 
+- **Xarxa Interna**:La màquina només pot comunicar-se amb altres màquines que estiguin a la mateixa xarxa interna.
+
+-  **Xarxa NAT**: La màquina pot comunicar-se amb el nostre i ordinador, però també a la xarxa.
+
+D'aquestes 4 opcions, la més òptima és la Xarxa NAT, degut a que podem instal·lar i actualitzar paquets quan vulguem (Tenim connexió a xarxa), també tenim connexió directa al nostre ordinador, i a més gràcies a això no exposem la màquina a la LAN de la nostra xarxa. A part de tot això, també l'escollim perquè la IP es pot fer fixa, i a mi em convé bastant perquè treballo amb un disc que te ubuntu instal·lat, i cada dia puc estar a un ordinador diferent, en cas de que no tingues una IP fixa (Adaptador Pont) la IP canviaria en qualsevol moment. 
 
 ## Comandes generals i instal·lacions.
 
