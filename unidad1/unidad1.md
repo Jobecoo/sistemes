@@ -108,7 +108,8 @@ GRUB_DISABLE_OS_PROBER=false
 ```
 i després tornem a fer un sudo update-grub per a tornar a reiniciar la màquina.
 
-<img width="733" height="485" alt="10" src="https://github.com/user-attachments/assets/a95df51e-0f5b-4a66-9a5f-fa2d17263719" />
+<img width="698" height="398" alt="10" src="https://github.com/user-attachments/assets/68dcaaff-9ead-41ef-ac11-8aa25a726ab6" />
+
 
 Com podem observar, en reiniciar la màquina ja ens apareix per a arrencar o amb Windows o amb Ubuntu.
 
