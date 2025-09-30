@@ -84,8 +84,35 @@ En haver instal·lat el Windows, se'ns demanarà que fessim una configuració b�
 
 <img width="1024" height="857" alt="6" src="https://github.com/user-attachments/assets/fb3dcbfa-c41c-4c26-97da-dfb237155907" />
 
-Ara, comença el problema "On és el meu ubuntu?" "Per què no em deixa triar Ubuntu?" És senzill, la resposta és que Windows es carrega el grub del Ubuntu, però es pot solucionar, en iniciar la màquina premem repetidament ESC/F12 i se'ns obrirà un menú.
+Ara, comença el problema "On és el meu ubuntu?" "Per què no em deixa triar Ubuntu?" És senzill, la resposta és que Windows es carrega el grub del Ubuntu, però es pot solucionar, en iniciar la màquina premem repetidament ESC/F12 i se'ns obrirà un menú. Seleccionarem l'opció de boot manager.
 
+<img width="847" height="254" alt="7" src="https://github.com/user-attachments/assets/f905b7aa-3fa5-49bb-9057-d7eb0cfd3d3f" />
+
+Arranquem amb Ubuntu.
+
+<img width="487" height="249" alt="8" src="https://github.com/user-attachments/assets/84febf30-f96c-4793-a2ac-0a3d4655dc02" />
+
+Ja estarem dintre del nostre sistema Ubuntu, ara iniciem la sessió dintre de Ubuntu i obrim un terminal, amb les següents comandes
+
+```
+sudo update-grub
+sudo grub-install /dev/sda
+```
+
+<img width="737" height="483" alt="9" src="https://github.com/user-attachments/assets/2ca94d18-344a-463c-94ec-11a6fe5f402b" />
+
+He tingut algun problemeta perquè al reiniciar la màquina només em detectava ubuntu, he estat mirant i la solució és editar el fitxer _/etc/default/grub_ i afegir la línea següent:
+
+```
+GRUB_DISABLE_OS_PROBER=false
+```
+i després tornem a fer un sudo update-grub per a tornar a reiniciar la màquina.
+
+<img width="733" height="485" alt="10" src="https://github.com/user-attachments/assets/a95df51e-0f5b-4a66-9a5f-fa2d17263719" />
+
+Com podem observar, en reiniciar la màquina ja ens apareix per a arrencar o amb Windows o amb Ubuntu.
+
+<img width="632" height="277" alt="11" src="https://github.com/user-attachments/assets/92d4af17-a395-4e5d-b95e-82f4f5d187fe" />
 
 
 ## Punts de restauració.
