@@ -131,3 +131,5 @@ Quan creem una màquina virtual, hem d'establir un tipus de xarxa, nosaltres exp
 D'aquestes 4 opcions, la més òptima és la Xarxa NAT, degut a que podem instal·lar i actualitzar paquets quan vulguem (Tenim connexió a xarxa), també tenim connexió directa al nostre ordinador, i a més gràcies a això no exposem la màquina a la LAN de la nostra xarxa. A part de tot això, també l'escollim perquè la IP es pot fer fixa, i a mi em convé bastant perquè treballo amb un disc que te ubuntu instal·lat, i cada dia puc estar a un ordinador diferent, en cas de que no tingues una IP fixa (Adaptador Pont) la IP canviaria en qualsevol moment. 
 
 ## Comandes generals i instal·lacions.
+
+apt cache policy, configuracio del preferences.d, apt-cache policy "paquet" apt install
