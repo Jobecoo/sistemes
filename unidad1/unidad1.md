@@ -158,12 +158,15 @@ Com podem observar, ja la tenim instal·lada. Ara borrem els fitxers creats ante
 <img width="404" height="89" alt="image" src="https://github.com/user-attachments/assets/42035951-f479-4b55-88b3-d982614c56f8" />
 
 Restablim la instantània, i ens avisa dels arxius que modificarà
+
 <img width="502" height="310" alt="image" src="https://github.com/user-attachments/assets/d20dc0dd-53fe-4711-802b-9f191110df16" />
 
 I comença a fer-se la restauració, després d'això es reinicia el sistema
+
 <img width="741" height="259" alt="image" src="https://github.com/user-attachments/assets/6370747b-1747-4e49-b70e-929243c86dcc" />
 
 Comprovem que s'hagin restaurat els arxius, tornen a estar hola i adeu.
+
 <img width="544" height="97" alt="image" src="https://github.com/user-attachments/assets/89ed5832-cffb-49eb-ac5b-7d1aa1f85606" />
 
 
