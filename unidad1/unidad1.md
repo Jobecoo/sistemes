@@ -120,30 +120,39 @@ Com podem observar, en reiniciar la màquina ja ens apareix per a arrencar o amb
 Mitjançant el programa timeshift, realitzarem punts de restauració en el nostre sistema operatiu Ubuntu.
 
 Evidentment, el primer que farem serà instal·lar Timeshift dintre de la nostra màquina virtual. 
+
 <img width="637" height="147" alt="image" src="https://github.com/user-attachments/assets/de50b151-bdc8-4df3-8dd5-89e197efc088" />
 
 Ara, seleccionem el tipus de instantània que volem
+
 <img width="520" height="201" alt="image" src="https://github.com/user-attachments/assets/6a87cced-5bf9-4dd2-98e8-124ed15437de" />
 
 Le localització de la instantània
+
 <img width="735" height="204" alt="image" src="https://github.com/user-attachments/assets/8c59380d-ba6f-477f-9733-320dde6b8be8" />
 
 Quan volem que es faci cada instantània, jo crec queseía recomanable cada boot.
+
 <img width="411" height="295" alt="image" src="https://github.com/user-attachments/assets/ba68c5ea-81ed-43f7-8094-e8b33802650f" />
 
 Voldrem que nomes s'agafin els arxius de la home del meu usuari
+
 <img width="597" height="154" alt="image" src="https://github.com/user-attachments/assets/fe62e7df-f528-4333-87d9-b8f16a0135d9" />
 
 En teoria, per cada vegada que arranquem el sistema es fa una còpia de seguretat, però també la podem fer manualment. 
+
 <img width="790" height="629" alt="image" src="https://github.com/user-attachments/assets/62319ce0-97b1-4202-bf11-12b56cce17d0" />
 
 Pero abans de crear-la, creem uns arxius per a comprovar que funciona correctament. He creat una carpeta que es diu adeu, i un fitxer que es diu hola.
+
 <img width="503" height="70" alt="image" src="https://github.com/user-attachments/assets/dd104cdb-e1b4-4149-b25c-8187b920b975" />
 
 Ara si, ja podem crear la instantànea
+
 <img width="499" height="602" alt="image" src="https://github.com/user-attachments/assets/74813232-f904-45d3-a940-a650f06152bc" />
 
 Com podem observar, ja la tenim instal·lada. Ara borrem els fitxers creats anteriorment.
+
 <img width="784" height="324" alt="image" src="https://github.com/user-attachments/assets/3194cdbd-9dd0-43e9-89a6-aecd2c11c6d7" />
 
 <img width="404" height="89" alt="image" src="https://github.com/user-attachments/assets/42035951-f479-4b55-88b3-d982614c56f8" />
