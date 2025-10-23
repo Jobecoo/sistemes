@@ -24,8 +24,17 @@ A mesura que vas treballant el sistema, els arxius es van separant en diferents 
   
   - Tipus de formatieg
       - Baix nivell
+   
+Borra fitxers, el sistema fitxers i si troba algun sector defectuós els intenta reparar.
+
       - Mig nivell
+   
+Borra el sistema de fitxers, però si troba algun sector defectuós, el marca per a no guardar fitxers dintre
+
       - Alt nivell
+   
+Només borra el sistema de fitxers.
+
   - Gestió de particions
       - GPARTED
       - Comandes
