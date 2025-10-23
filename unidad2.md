@@ -77,6 +77,23 @@ Per a realitzar particions podem utilitzar gparted, és una eina uqe ens crear p
 
 <img width="775" height="538" alt="image" src="https://github.com/user-attachments/assets/3a5a3f47-7958-48f0-b524-eafb2ba0fe53" />
 
+### Particions per comandes
+
+Amb l'eina fdisk podem crear particions per comandes.
+
+<img width="867" height="430" alt="image" src="https://github.com/user-attachments/assets/560e3371-84be-4c02-b868-647dc0cce8d0" />
+
+Ara creem una segona partició i guardem.
+
+<img width="793" height="316" alt="image" src="https://github.com/user-attachments/assets/6cb0f7e6-49fa-466a-960d-81fa21e34f93" />
+
+Com podem observar, aquí tenim les dues particions.
+
+<img width="555" height="214" alt="image" src="https://github.com/user-attachments/assets/3191553a-a376-4c85-ae8a-47ac20920adc" />
+
+
+
+
 
 - Gesrió de processos
 - Gestió d'usuaris i grups i permisos 
