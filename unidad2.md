@@ -22,7 +22,7 @@ La fragmentació interna es quan es desaprofiten blocs del disco perquè els blo
 
 A mesura que vas treballant el sistema, els arxius es van separant en diferents blocs, 
   
-- Tipus de formatieg
+### Tipus de formatieg
 
 Aquí tenim els diferents tipus de sistemes de formateig.
       
