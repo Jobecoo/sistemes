@@ -91,11 +91,24 @@ Com podem observar, aquí tenim les dues particions.
 
 <img width="555" height="214" alt="image" src="https://github.com/user-attachments/assets/3191553a-a376-4c85-ae8a-47ac20920adc" />
 
+Canviem la mida del bloc del sdb1, per tant, passarem la mida del bloc de 4096 a 2048.
+
+<img width="695" height="264" alt="image" src="https://github.com/user-attachments/assets/a4d4e909-445a-41a8-bccd-bf1504bbbdb6" />
+
+Comprovem que la mida del bloc s'hagicanviat correctament.
+
+<img width="592" height="108" alt="image" src="https://github.com/user-attachments/assets/e275f5ad-8746-485e-9783-bb9659054d1e" />
+
+Ara canviem el sistema de fitxers de la segona partició a ntfs i comprovem que s'hagi fet correctament.
+
+<img width="705" height="150" alt="image" src="https://github.com/user-attachments/assets/3a1d861d-7dc9-487b-a4ee-98990f7a516a" />
+
+Per a poder fer una comprovació més visual, tenim el gparted
+
+<img width="775" height="261" alt="image" src="https://github.com/user-attachments/assets/e5a8ee83-f44b-4e25-91aa-f45212d06c24" />
 
 
-
-
-- Gesrió de processos
+- Gestió de processos
 - Gestió d'usuaris i grups i permisos 
 - Còpies de seguretat i automatització de tasques
 - Quotes d'usuari
