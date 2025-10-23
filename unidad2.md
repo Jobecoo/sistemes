@@ -61,6 +61,14 @@ Per a poder treure la mida del bloc de cada partició, utilitzant tune2fs podem 
 
 <img width="525" height="75" alt="image" src="https://github.com/user-attachments/assets/5a845332-eeb0-4548-aa6d-aa1cd3244dec" />
 
+Si volem saber si és necessari desfragmentar el sistema.
+
+<img width="1117" height="368" alt="image" src="https://github.com/user-attachments/assets/52f75020-3966-400a-b507-aa3c789a5643" />
+
+Si volem desfragmentar és la mateixa comanda però sense el -c
+
+<img width="1068" height="420" alt="image" src="https://github.com/user-attachments/assets/10b3581b-46f9-43d4-924e-fcceb93a2a4d" />
+
 
 
 - Gesrió de processos
