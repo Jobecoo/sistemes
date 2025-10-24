@@ -183,6 +183,24 @@ Quan creem una màquina virtual, hem d'establir un tipus de xarxa, nosaltres exp
 
 D'aquestes 4 opcions, la més òptima és la Xarxa NAT, degut a que podem instal·lar i actualitzar paquets quan vulguem (Tenim connexió a xarxa), també tenim connexió directa al nostre ordinador, i a més gràcies a això no exposem la màquina a la LAN de la nostra xarxa. A part de tot això, també l'escollim perquè la IP es pot fer fixa, i a mi em convé bastant perquè treballo amb un disc que te ubuntu instal·lat, i cada dia puc estar a un ordinador diferent, en cas de que no tingues una IP fixa (Adaptador Pont) la IP canviaria en qualsevol moment. 
 
+### Tipus de configuració de xarxa
+
+Per a configuarar la nostra xarxa dintre de la màquina es pot fer de dues maneres diferents, dintre de la interfície gràfica podem crear un perfil.
+
+<img width="579" height="478" alt="image" src="https://github.com/user-attachments/assets/ed04b8a2-cc27-4d69-a73b-3529f8b91bd7" />
+
+També ho podem fer amb netplan, editant l'arxiu /etc/netplan/01-network-manager-all.yaml
+
+<img width="601" height="277" alt="image" src="https://github.com/user-attachments/assets/0e0b7da3-4d4e-46dc-825d-f6fc944c26fa" />
+
+Després fem un sudo netplan apply
+
+<img width="722" height="326" alt="image" src="https://github.com/user-attachments/assets/2e58ce5a-6478-4b63-b4ea-ab8e656db917" />
+
+Comprovem que s'hagi connectat mitjançant netplan
+
+<img width="317" height="389" alt="image" src="https://github.com/user-attachments/assets/01eff08a-725f-41b8-acd9-56c2e33af14d" />
+
 ## Comandes generals i instal·lacions.
 
 Utilitzarem pinning packet per a fixar la versió de la comanda nano.
