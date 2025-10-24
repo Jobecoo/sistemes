@@ -185,33 +185,32 @@ D'aquestes 4 opcions, la més òptima és la Xarxa NAT, degut a que podem instal
 
 ## Comandes generals i instal·lacions.
 
-Utilitzarem el pinning packet
+Utilitzarem pinning packet per a fixar la versió de la comanda nano.
 
-Com podem observar tenim 2 versions de VLC disponibles, la 4.0.0 que es la candidata, i la 3.0.16. Mitjançant pinning packet farem que la candidata sigui la 3.0.16.
+Primer,creem un fitxer de fonts. 
 
-<img width="904" height="181" alt="image" src="https://github.com/user-attachments/assets/ae6b22d6-8610-4ce8-b843-a26166450cf4" />
+<img width="685" height="40" alt="image" src="https://github.com/user-attachments/assets/f15151d0-4cae-4b01-a23a-857d223e6d0e" />
 
-Creem un arxiu a preferences.d per a poder establir la versio candidata
+Afegim una nova font per a que ens pugui sortir una altra versió a part de la que tenim actualment.
 
-<img width="573" height="39" alt="image" src="https://github.com/user-attachments/assets/88127fe2-c8cd-413f-b7e9-f1c82d8deb18" />
+<img width="640" height="99" alt="image" src="https://github.com/user-attachments/assets/e94f9c3e-7713-433a-8778-e926fe81bedb" />
 
-Establim com a Pin la 3.0.16
+Fem un update per a que s'actualitzi la llista de versions.
 
-<img width="846" height="142" alt="image" src="https://github.com/user-attachments/assets/d1174cb9-f659-48d2-b50f-da79ab36f37f" />
+<img width="729" height="236" alt="image" src="https://github.com/user-attachments/assets/51329abc-89ee-4fe3-8743-260047055c70" />
 
-Marquem el paquet VLC com a "mantingut" (hold), que és una altra manera de prevenir actualitzacions automàtiques.
+Podem observar que en fer un policy tenim disponibles la versió 6.2 i la 4.8, actualment tenim la 6.2, per tant, intentarem que per defecte s'instal·li la 4.8
 
-<img width="419" height="55" alt="image" src="https://github.com/user-attachments/assets/7f2a5f31-70a3-4010-b3d9-06059be99a65" />
+<img width="727" height="269" alt="image" src="https://github.com/user-attachments/assets/c7d8fafb-207c-4718-aece-8f765c2b4bcb" />
 
-Verifiquem i efectivament està la versió 3.0.16 com a candidata
+Creem un fitxer de preferències al directori sudo nano /etc/apt/preferences.d/.
 
-<img width="898" height="180" alt="image" src="https://github.com/user-attachments/assets/6bffca17-6d5d-42d5-b24b-b838f4d07ca5" />
+<img width="537" height="124" alt="image" src="https://github.com/user-attachments/assets/d3021d4e-d8e5-4f10-90e0-576d7fa3a991" />
 
-Instal·lem VLC
+Podem observar que el candidat ara ja és la versió 4.8
 
-<img width="707" height="148" alt="image" src="https://github.com/user-attachments/assets/7f5c1ec8-6f86-47fb-84c2-032c0b7a5582" />
+<img width="724" height="250" alt="image" src="https://github.com/user-attachments/assets/5df4d3bd-1230-4f8c-91f6-6cf4638673a8" />
 
-I comprovem la versió, que efectivament és la 3.0.16
+I si instal·lem nano, ja ens avisa de que anem a fer un downgrade
 
-<img width="687" height="222" alt="image" src="https://github.com/user-attachments/assets/13333e00-d442-4390-9b84-964880cfaabc" />
-
+<img width="719" height="272" alt="image" src="https://github.com/user-attachments/assets/8c53d161-28eb-4537-8f65-f5662856fe8c" />
