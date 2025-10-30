@@ -240,6 +240,8 @@ Si volem esborrar un usuari d'un group ho podem fer mitjançant deluser
 
 canviar nom usuari.
 
+quina comanda utilitzem oer a canviar un nom d'usuari correctament. 
+
 ### Directoris i fitxers importants
 
 ### Gestió avançada 
