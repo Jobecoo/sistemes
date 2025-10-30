@@ -111,9 +111,39 @@ Per a poder fer una comprovació més visual, tenim el gparted
 - Gestió de processos
 ## Gestió d'usuaris i grups i permisos
 
+definir que son usuaris i grups
+
 ### Fitxers importants
 
+L'arxiu /etc/passwd és un fitxer important on podem observar els usuaris. 
+
+Quan creem un uusari sempre es crea un grup amb el mateix nom uqe l'usuari, aquest grup té un numero identificador. Tots els usuaris formen part d'un grup prinicipal, només pot ser un. 
+
+<img width="986" height="851" alt="image" src="https://github.com/user-attachments/assets/71ab9fb2-fcea-4c34-9f88-2962422d9979" />
+
+En l'arxiu _/etc/shadow_ podem observar l'arxiu amb les contrasenyes de tots els usuaris, però aquestes sempre estarán encriptades, normalment, amb md5. Aquest arxiu també conté informació sobre la caducitat de les contrasenyes.
+
+<img width="977" height="857" alt="image" src="https://github.com/user-attachments/assets/4a848ec2-f223-4f7a-88a7-ee2847a711b8" />
+
+En l'arxiu /etc/group podem observar els grups. 
+
+<img width="956" height="859" alt="image" src="https://github.com/user-attachments/assets/47bf4208-4b8e-4569-9e80-6dfd71aa33f0" />
+
+En l'arxiu gshadow també podem observar els usuaris que formen part d'un grup. Al gshadow, a diferencia del _/etc/group_, podem observar qui és administrador del group. 
+
+<img width="990" height="858" alt="image" src="https://github.com/user-attachments/assets/fda93481-fad0-4407-902d-1a5ab2018d4d" />
+
 ### Comandes bàsiques
+
+Nosaltres organitzarem els nostres usuaris i grups mitjançant comandes, però existeix una eina anomenada gnome-system-tools que ens permet gestionar els nnostres usuaris d'una manera bastant còmoda, podent gestionar els permisos de l'usuari. 
+
+<img width="1056" height="356" alt="image" src="https://github.com/user-attachments/assets/eacfc331-4a61-4636-a677-46c2b0deecba" />
+
+Aquí podem observar com és l'eina gràficament. Podem afegir, esborrar i gestionar grups. 
+
+<img width="652" height="437" alt="image" src="https://github.com/user-attachments/assets/12ce7e2f-c527-43f9-89d8-90446cd78883" />
+
+
 
 ### Directoris i fitxers importants
 
