@@ -109,6 +109,18 @@ Per a poder fer una comprovació més visual, tenim el gparted
 
 
 - Gestió de processos
-- Gestió d'usuaris i grups i permisos 
+## Gestió d'usuaris i grups i permisos
+
+### Fitxers importants
+
+### Comandes bàsiques
+
+### Directoris i fitxers importants
+
+### Gestió avançada 
+
+### PAM
+
+
 - Còpies de seguretat i automatització de tasques
 - Quotes d'usuari
