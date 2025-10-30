@@ -171,7 +171,74 @@ Si accedim a la home de l'usuari, podrem observar que te la seva home completa.
 
 <img width="734" height="63" alt="image" src="https://github.com/user-attachments/assets/56221f0e-befb-450a-a2f3-93ab5d22cff2" />
 
-També tenim l'opció d'utilitzar l'eina useradd, que ens permet crear usuaris 
+També tenim l'opció d'utilitzar l'eina useradd, que ens permet crear usuaris que no hagin de accedir gràficament. 
+
+Primer fem un useradd, amb el nom d'usuari que vulguem. De moment aquest usuari no té cap utilitat
+
+<img width="278" height="41" alt="image" src="https://github.com/user-attachments/assets/47848aeb-757f-4148-be39-7dcf4c27e0ae" />
+
+Podem observar que l'usuari existeix
+
+<img width="441" height="53" alt="image" src="https://github.com/user-attachments/assets/b66e1b98-a6a2-4826-b20e-9213d2492573" />
+
+Però no existeix el direcotri de l'usuari zoro
+
+<img width="237" height="59" alt="image" src="https://github.com/user-attachments/assets/a66a274a-5c03-41b6-b31c-fed713239c94" />
+
+També podem observar que el grup zoro s'ha creat
+
+<img width="402" height="63" alt="image" src="https://github.com/user-attachments/assets/77cc22e5-83ee-4605-90d4-5c38d3ff2020" />
+
+Ara modificarem l'usuari mitjançant l'eina usermod. Modificarem el shell. Abans teniem /bin/sh, i ara tenim /bin/bash.
+
+<img width="427" height="80" alt="image" src="https://github.com/user-attachments/assets/a609c309-929c-4d9c-8287-9390f9f0fc5a" />
+
+Ara creem un directori per a l'usuari zoro. Però el problema és que el propietari d'aquesta és root, i no zoro. 
+
+<img width="514" height="180" alt="image" src="https://github.com/user-attachments/assets/8df75a2a-f17a-4d36-a7a0-4c2f48388eb5" />
+
+Amb la comanda chown li podem canviar la propietat de la carpeta. 
+
+<img width="511" height="150" alt="image" src="https://github.com/user-attachments/assets/7b0fb831-52f4-4c1c-ab4b-25780863e6f9" />
+
+Per a poder accedir a l'usuari, necessitarem una contrasenya per a l'usuari Zoro. Mitjançant passwd li podem assiganar-li una
+
+<img width="509" height="113" alt="image" src="https://github.com/user-attachments/assets/730aacf0-
+582e-4cb0-847b-2a796b070808" />
+
+I com podem observar, ja podem accedir a l'usuari Zoro
+
+<img width="718" height="74" alt="image" src="https://github.com/user-attachments/assets/3e8093fe-4a0e-44b3-9152-252fb9797c68" />
+
+Si volem bloquejar un usuari, podem utilitzar usermod -L. I el que fa es posar un "!" a l'encriptació del _/etc/shadow_.
+
+<img width="879" height="116" alt="image" src="https://github.com/user-attachments/assets/51410fe8-254b-4729-859b-221d88138ecc" />
+
+I per a desbloquejar l'usuari, amb usermod -U i podrem tornar accedir a l'usuari.
+
+<img width="891" height="77" alt="image" src="https://github.com/user-attachments/assets/da2b4298-9578-41f4-8554-a67579108f16" />
+
+Per a poder crear groups, farem addgroup, i per a modificar el seu nom és amb groupmod -n
+
+<img width="435" height="139" alt="image" src="https://github.com/user-attachments/assets/854478f4-763f-4a5f-98d2-a0952c51f4f7" />
+
+Si volem afegir un usuari a un group, podem fer adduser "nom de l'usuari" "nom del group"
+
+<img width="386" height="94" alt="image" src="https://github.com/user-attachments/assets/1bd1ad6b-7a17-4006-a552-f6c1cb4d6fd7" />
+
+Es pot observar com l'usuari forma part del group pirates
+
+<img width="399" height="83" alt="image" src="https://github.com/user-attachments/assets/448e57db-664f-4258-ae73-1bb011590238" />
+
+Aquí podem observar la diferència entre l'usuari luffy i l'usuari amb el que hem creat la màquina.
+
+<img width="397" height="211" alt="image" src="https://github.com/user-attachments/assets/0e224d93-ddbd-4585-83d2-ecae19bf147f" />
+
+Si volem esborrar un usuari d'un group ho podem fer mitjançant deluser
+
+<img width="397" height="75" alt="image" src="https://github.com/user-attachments/assets/6b9d666f-e876-43b4-b5f1-4d573dd968c4" />
+
+canviar nom usuari.
 
 ### Directoris i fitxers importants
 
