@@ -143,7 +143,35 @@ Aquí podem observar com és l'eina gràficament. Podem afegir, esborrar i gesti
 
 <img width="652" height="437" alt="image" src="https://github.com/user-attachments/assets/12ce7e2f-c527-43f9-89d8-90446cd78883" />
 
+Ara passem a la creació d'usuaris mitjançant comandes. Podem crear un usuari mitjançant la comanda adduser. Creem un usuari anomenat Luffy
 
+<img width="710" height="422" alt="image" src="https://github.com/user-attachments/assets/4caad8ba-1a84-49aa-a4ef-812aff7c7bd5" />
+
+Si anem a /etc/passwd podem observar com l'usuari Luffy s'ha creat correctament. 
+
+<img width="460" height="66" alt="image" src="https://github.com/user-attachments/assets/3953bb6f-4354-41a9-8f78-420242e694f5" />
+
+També podem observar que al _/etc/shadow_ està el nostre usuari Luffy
+
+<img width="899" height="84" alt="image" src="https://github.com/user-attachments/assets/466af7a0-9ed5-4f08-ac53-bc4ffd60e3f1" />
+
+Si fem un ls de _/home_ podem observar com l'usuari luffy té el seu propi directori 
+
+<img width="230" height="60" alt="image" src="https://github.com/user-attachments/assets/cccc3397-7454-4347-8e73-9019be5802ca" />
+
+No obstant, si esborrrem l'usuari luffy manté el seu propi directori
+
+<img width="425" height="130" alt="image" src="https://github.com/user-attachments/assets/50d6453f-2f4c-4f0f-a50e-0f2b51fc8570" />
+
+Però si fem un deluser -r luffy llavors la seva hom si que s'esborraria. Tornem a crear l'usuari luffy i ho comprovem. 
+
+<img width="725" height="400" alt="image" src="https://github.com/user-attachments/assets/b052979f-5bde-43ac-b0d4-6035f2611e86" />
+
+Si accedim a la home de l'usuari, podrem observar que te la seva home completa.
+
+<img width="734" height="63" alt="image" src="https://github.com/user-attachments/assets/56221f0e-befb-450a-a2f3-93ab5d22cff2" />
+
+També tenim l'opció d'utilitzar l'eina useradd, que ens permet crear usuaris 
 
 ### Directoris i fitxers importants
 
