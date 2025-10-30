@@ -242,6 +242,8 @@ canviar nom usuari.
 
 quina comanda utilitzem oer a canviar un nom d'usuari correctament. 
 
+mirar de crear un usuari amb una sola comanda. amb useradd
+
 ### Directoris i fitxers importants
 
 ### Gestió avançada 
