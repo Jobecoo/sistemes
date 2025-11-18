@@ -244,6 +244,48 @@ quina comanda utilitzem oer a canviar un nom d'usuari correctament.
 
 mirar de crear un usuari amb una sola comanda. amb useradd
 
+
+## Permisos
+
+COMENTAR XWR
+
+Per a canviar la propietat d'un arxiu o carpeta d'un usuari al altre, podem fer-ho de dues formes diferents.
+
+<img width="495" height="149" alt="image" src="https://github.com/user-attachments/assets/91087599-ed61-484a-9e59-69564664b4b5" />
+
+També podem establir un gup per a la carpeta. 
+
+<img width="490" height="63" alt="image" src="https://github.com/user-attachments/assets/68ee1333-60b4-48fa-a9b9-1681b3cb39a7" />
+
+També podem observar que li podem llevar permisos sobre aquest arxiu a qualsevol usuari que no formi part del grup o sigui propietari.
+
+<img width="487" height="77" alt="image" src="https://github.com/user-attachments/assets/49bcf6ef-3193-42a1-ac4e-0c45996719a5" />
+
+Si entrem al usuari nick, es pot observar com pot crear arxius dintre i accedir a la carpeta.
+
+<img width="380" height="93" alt="image" src="https://github.com/user-attachments/assets/348edca0-2662-43c1-bd3f-188a93312cfa" />
+
+Intentem accedir a l'usuari cire, i entrar a la carpeta, ens deixa, però com que no forma part del grup no ens deixa crear fitxers dintre. 
+
+<img width="433" height="71" alt="image" src="https://github.com/user-attachments/assets/7e5e762f-520c-4887-990d-25a18330438b" />
+
+I com que l'usuari ferran no forma part del grup palomes no ens deixa entrar dintre del directori palomes.
+
+<img width="345" height="56" alt="image" src="https://github.com/user-attachments/assets/3002157e-b79c-4612-9503-3999cc9300bc" />
+
+Ara establim que tots els usuaris dintre del grup palomes pot accedir i crear dintre.
+
+<img width="514" height="72" alt="image" src="https://github.com/user-attachments/assets/21e9b26d-bf81-4f78-9d05-4a54cb982f87" />
+
+Ara, l'usuari deivy que esta dintre del grup palomes, pot crear arxius dintre d'aquesta. 
+
+<img width="416" height="76" alt="image" src="https://github.com/user-attachments/assets/9c1f8fc1-663f-49a0-9a81-8b4b34bfdb21" />
+
+I els altres usuaris tambe poden acedir, crear i visualitzar els fitxers de dintre.
+
+<img width="296" height="78" alt="image" src="https://github.com/user-attachments/assets/a100c2f2-2cf0-42cc-8ba0-c466e5473333" />
+
+
 ### Directoris i fitxers importants
 
 ### Gestió avançada 
