@@ -286,6 +286,40 @@ I els altres usuaris tambe poden acedir, crear i visualitzar els fitxers de dint
 <img width="296" height="78" alt="image" src="https://github.com/user-attachments/assets/a100c2f2-2cf0-42cc-8ba0-c466e5473333" />
 
 
+
+
+## UMASK
+
+Sense sudo és 0022 i l'usuari normal és 0002
+
+<img width="269" height="130" alt="image" src="https://github.com/user-attachments/assets/d60b7c91-6b52-4f49-9463-bab3ed811b6f" />
+
+login.defs
+
+<img width="317" height="83" alt="image" src="https://github.com/user-attachments/assets/82181e2d-0e02-469f-a8a3-c7d289ca297f" />
+
+.profile
+
+<img width="1020" height="233" alt="image" src="https://github.com/user-attachments/assets/b10425c8-46f5-4747-827b-d3f862fb0447" />
+
+Canvi de mascara
+
+<img width="230" height="114" alt="image" src="https://github.com/user-attachments/assets/c544f55d-fb07-47a3-9252-edc75b42b05e" />
+
+Canviem umask a 0004 i canvien els permisos dels fitxers que hem creat.
+
+<img width="461" height="122" alt="image" src="https://github.com/user-attachments/assets/010c20c8-4eb6-41b5-aaf8-7c6704ef1839" />
+
+Per a fer-ho definitiu podem modificar el login.defs
+
+<img width="1007" height="453" alt="image" src="https://github.com/user-attachments/assets/2875886b-7fe7-4143-afde-5219dd9dd2a9" />
+
+Creem un usari nou, i per a comprovar el funcionament del canvi de màscara, a part del umask, podem crear una carpeta i un arxiu. 
+
+<img width="442" height="206" alt="image" src="https://github.com/user-attachments/assets/5aedac87-a43e-4fe2-aec4-e812333ab688" />
+
+
+
 ### Directoris i fitxers importants
 
 ### Gestió avançada 
