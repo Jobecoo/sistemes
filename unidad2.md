@@ -319,12 +319,31 @@ Creem un usari nou, i per a comprovar el funcionament del canvi de màscara, a p
 <img width="442" height="206" alt="image" src="https://github.com/user-attachments/assets/5aedac87-a43e-4fe2-aec4-e812333ab688" />
 
 
+## ACLs
 
-### Directoris i fitxers importants
+Les ACLS (Access Control Lists o Llistes de Control d'Accés) són un sistema de permisos que complementa els permisos bàsics UGO (Usuari, Grup, Altres) de Linux, oferint un control d'accés més granular i flexible. Permeten assignar permisos concrets de lectura, escriptura o execució a usuaris individuals o grups específics que no siguin el propietari o el grup principal del fitxer. Això és fonamental en entorns col·laboratius on el control d'accés ha de ser precís i detallat.
 
-### Gestió avançada 
+Creo una carpeta anomenada "1piece", i amb la comanda getfacl podem comprovar els permisos. 
 
-### PAM
+<img width="412" height="255" alt="image" src="https://github.com/user-attachments/assets/eac8070e-f9cc-4268-b670-f214b47da64a" />
+
+
+Si volem que algun usuari no pugui accedir a la carpeta podem uilitzar la comanda 
+
+```
+setfacl -m user:usuari: --- carpeta
+```
+
+  <img width="427" height="219" alt="image" src="https://github.com/user-attachments/assets/66ccb7ab-f21d-46f6-9b36-00ac24c765dd" />
+
+Ens connectem amb l'usuari luffy i accedm a la carpeta 1piece, veurem que no podrem accedir.
+
+<img width="485" height="289" alt="image" src="https://github.com/user-attachments/assets/37bc2804-2fec-4786-85b0-1a50f88a251a" />
+
+Ara podem resetejar les ACL utilitzant la coletilla -b a setfacl.
+
+<img width="291" height="363" alt="image" src="https://github.com/user-attachments/assets/0e6edca2-34ee-43d4-be13-33e8ed5a6114" />
+
 
 
 - Còpies de seguretat i automatització de tasques
