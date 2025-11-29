@@ -109,7 +109,7 @@ Per a poder fer una comprovació més visual, tenim el gparted
 
 
 - Gestió de processos
-## Gestió d'usuaris i grups i permisos
+# Gestió d'usuaris i grups i permisos
 
 definir que son usuaris i grups
 
@@ -294,15 +294,15 @@ Sense sudo és 0022 i l'usuari normal és 0002
 
 <img width="269" height="130" alt="image" src="https://github.com/user-attachments/assets/d60b7c91-6b52-4f49-9463-bab3ed811b6f" />
 
-login.defs
+Editem el fitxer login.defs
 
 <img width="317" height="83" alt="image" src="https://github.com/user-attachments/assets/82181e2d-0e02-469f-a8a3-c7d289ca297f" />
 
-.profile
+També editem el .profile
 
 <img width="1020" height="233" alt="image" src="https://github.com/user-attachments/assets/b10425c8-46f5-4747-827b-d3f862fb0447" />
 
-Canvi de mascara
+Fem un canvi de la màscara de l'usuari 
 
 <img width="230" height="114" alt="image" src="https://github.com/user-attachments/assets/c544f55d-fb07-47a3-9252-edc75b42b05e" />
 
