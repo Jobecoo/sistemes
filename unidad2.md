@@ -234,20 +234,36 @@ Aquí podem observar la diferència entre l'usuari luffy i l'usuari amb el que h
 
 <img width="397" height="211" alt="image" src="https://github.com/user-attachments/assets/0e224d93-ddbd-4585-83d2-ecae19bf147f" />
 
-Si volem esborrar un usuari d'un group ho podem fer mitjançant deluser
+Si volem esborrar un usuari d'un group ho podem fer mitjançant deluser.
 
 <img width="397" height="75" alt="image" src="https://github.com/user-attachments/assets/6b9d666f-e876-43b4-b5f1-4d573dd968c4" />
 
-canviar nom usuari.
 
-quina comanda utilitzem oer a canviar un nom d'usuari correctament. 
+## Canviar nom usuari correctament
 
-mirar de crear un usuari amb una sola comanda. amb useradd
+Si volem canviar el nom d'un usuari ho podem fer amb usermod, amb les coletilles -l, per a canviar el nom antic, -d, per a establir una home nova, i molt important el -m per a poder moure tots els arxius de la home de luffy per a donar-li al usuari zoro.
+
+<img width="525" height="344" alt="image" src="https://github.com/user-attachments/assets/7f80cdca-51e6-44f3-adfb-01116d5bebbc" />
 
 
-## Permisos
+## Crear un usuari amb una sola comanda
 
-COMENTAR XWR
+Per a crear un usuari amb userad afegirem les coletilles -m, que li crea una home automàticament, i -s per a que li crei una shell al usuari nami.
+
+<img width="426" height="76" alt="image" src="https://github.com/user-attachments/assets/7d62716d-b290-41d7-8221-ea1dbe8924d8" />
+
+
+# Permisos
+
+## Permisos Bàsics (XWR) a Linux
+
+Els permisos **XWR** són la notació simbòlica clau utilitzada en el sistema de permisos UGO (Usuari, Grup, Altres) de Linux per determinar les accions permeses sobre un fitxer o directori.
+
+| Lletra | Nom Complert | Notació Octal | Funció sobre Fitxers | Funció sobre Directoris |
+| :---: | :---: | :---: | :--- | :--- |
+| **r** | **Lectura** (Read) | 4 | Permet visualitzar el contingut del fitxer. | Permet **llistar** el contingut del directori (`ls`). |
+| **w** | **Escriptura** (Write) | 2 | Permet **modificar, desar i eliminar** el fitxer. | Permet **crear, eliminar i canviar el nom** dels fitxers dins del directori. |
+| **x** | **Execució** (Execute) | 1 | Permet **executar** el fitxer (si és un programa). | Permet **accedir** al directori (`cd`) i als seus subdirectoris (sense aquest permís no es pot entrar). |
 
 Per a canviar la propietat d'un arxiu o carpeta d'un usuari al altre, podem fer-ho de dues formes diferents.
 
@@ -298,7 +314,7 @@ Editem el fitxer login.defs
 
 <img width="317" height="83" alt="image" src="https://github.com/user-attachments/assets/82181e2d-0e02-469f-a8a3-c7d289ca297f" />
 
-També editem el .profile
+Al .profile podem observar quina és la màscara de l'usuari.
 
 <img width="1020" height="233" alt="image" src="https://github.com/user-attachments/assets/b10425c8-46f5-4747-827b-d3f862fb0447" />
 
@@ -346,5 +362,3 @@ Ara podem resetejar les ACL utilitzant la coletilla -b a setfacl.
 
 
 
-- Còpies de seguretat i automatització de tasques
-- Quotes d'usuari
