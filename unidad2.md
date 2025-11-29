@@ -335,7 +335,7 @@ Creem un usari nou, i per a comprovar el funcionament del canvi de màscara, a p
 <img width="442" height="206" alt="image" src="https://github.com/user-attachments/assets/5aedac87-a43e-4fe2-aec4-e812333ab688" />
 
 
-## ACLs
+# ACLs
 
 Les ACLS (Access Control Lists o Llistes de Control d'Accés) són un sistema de permisos que complementa els permisos bàsics UGO (Usuari, Grup, Altres) de Linux, oferint un control d'accés més granular i flexible. Permeten assignar permisos concrets de lectura, escriptura o execució a usuaris individuals o grups específics que no siguin el propietari o el grup principal del fitxer. Això és fonamental en entorns col·laboratius on el control d'accés ha de ser precís i detallat.
 
@@ -359,6 +359,28 @@ Ens connectem amb l'usuari luffy i accedm a la carpeta 1piece, veurem que no pod
 Ara podem resetejar les ACL utilitzant la coletilla -b a setfacl.
 
 <img width="291" height="363" alt="image" src="https://github.com/user-attachments/assets/0e6edca2-34ee-43d4-be13-33e8ed5a6114" />
+
+# Permisos especials
+
+## Permisos Especials (Especials) a Linux
+
+| Nom del Permís | Notació Octal | Notació Simbòlica | Aplicació Típica | Funció Principal |
+| :--- | :---: | :---: | :--- | :--- |
+| **SetUID (SUID)** | 4000 | `s` (a la posició de l'usuari) | Fitxers executables (com `passwd`) | Permet executar el fitxer amb els **permisos del propietari** (sovint *root*). |
+| **SetGID (SGID)** | 2000 | `s` (a la posició del grup) | Directoris de projectes compartits | **Directoris:** Tots els fitxers nous **hereten el grup** del directori pare. |
+| **Sticky Bit** | 1000 | `t` (a la posició dels altres) | Directoris públics (com `/tmp`) | Impedeix que un usuari **esborri fitxers d'un altre usuari**, fins i tot si té permisos d'escriptura (`w`). |
+
+Podem observar sense el sticky bit altres ususaris poden esborrar arxius d'altres.
+
+<img width="519" height="197" alt="image" src="https://github.com/user-attachments/assets/e855fd7f-c0e3-4df6-adc4-bba7812ac58b" />
+
+I amb el sticky bit no funciona
+
+<img width="316" height="24" alt="image" src="https://github.com/user-attachments/assets/dc0c439d-bf52-447f-a484-ac437166bbbf" />
+
+
+<img width="528" height="258" alt="image" src="https://github.com/user-attachments/assets/764024c6-61a4-47b0-b895-34e3a8865dc7" />
+
 
 
 
