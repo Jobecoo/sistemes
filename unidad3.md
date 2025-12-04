@@ -31,3 +31,6 @@ top &
 llençar processos amb &
 renice modificar prioritat de processos que ja estan en start
 nice llençar processos en una prioritat determinada
+
+
+<img width="861" height="468" alt="image" src="https://github.com/user-attachments/assets/387cee3e-ff20-4fb5-8683-5aa763a3b107" />
