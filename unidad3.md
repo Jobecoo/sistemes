@@ -41,3 +41,6 @@ nice llençar processos en una prioritat determinada
 dd
 
 <img width="650" height="148" alt="image" src="https://github.com/user-attachments/assets/7e9255ab-ed6e-4cb4-b7c8-b41374eefdf4" />
+
+
+FER DEJA-DUP O DUPLICITY
