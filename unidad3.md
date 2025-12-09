@@ -37,3 +37,7 @@ nice llençar processos en una prioritat determinada
 
 <img width="638" height="361" alt="image" src="https://github.com/user-attachments/assets/44d45593-bb5d-4eca-ba91-b836b5a697ba" />
 
+
+dd
+
+<img width="650" height="148" alt="image" src="https://github.com/user-attachments/assets/7e9255ab-ed6e-4cb4-b7c8-b41374eefdf4" />
