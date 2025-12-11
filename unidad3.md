@@ -44,3 +44,10 @@ dd
 
 
 FER DEJA-DUP O DUPLICITY
+
+
+<img width="639" height="202" alt="image" src="https://github.com/user-attachments/assets/caea2d05-f576-4b79-8023-a2c79a0cf206" />
+
+<img width="284" height="79" alt="image" src="https://github.com/user-attachments/assets/384c523c-8547-446b-a56e-cd19b1ab3b8e" />
+
+<img width="725" height="397" alt="image" src="https://github.com/user-attachments/assets/ddf1e7db-ba2c-4dbb-bacd-7d98eef59611" />
