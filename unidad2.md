@@ -1210,40 +1210,6 @@ Obtindrem un error: **"Disk quota exceeded"**
 
 ![alt text](image-54.png)
 
----
-
-## Quotes de grup
-
-### Crear grup i establir quota
-
-```bash
-sudo groupadd proyectoA
-sudo edquota -g proyectoA
-```
-
-
-### Verificar quota de grup
-
-```bash
-sudo quota -g proyectoA
-```
-
-
----
-
-## Gestió de quotes
-
-### Desactivar quotes
-
-```bash
-sudo quotaoff /mnt/datos
-```
-
-### Reactivar quotes
-
-```bash
-sudo quotaon /mnt/datos
-```
 
 
 ### Comprovar estat de quotes
