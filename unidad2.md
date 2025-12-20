@@ -999,6 +999,7 @@ sudo apt update
 sudo apt install quota
 ```
 
+![alt text](image-34.png)
 
 ---
 
@@ -1013,6 +1014,7 @@ df -h
 lsblk
 ```
 
+![alt text](image-35.png)
 
 Creem un directori de dades (si no existeix):
 
@@ -1020,6 +1022,7 @@ Creem un directori de dades (si no existeix):
 sudo mkdir -p /mnt/datos
 ```
 
+![alt text](image-36.png)
 
 ### 2. Editar /etc/fstab
 
@@ -1031,6 +1034,7 @@ Abans de modificar, veiem el contingut actual:
 cat /etc/fstab
 ```
 
+![alt text](image-37.png)
 
 Editem el fitxer:
 
@@ -1044,6 +1048,7 @@ Afegim les opcions a la línia de la partició:
 /dev/sdb1  /mnt/datos  ext4  defaults,usrquota,grpquota  0  2
 ```
 
+![alt text](image-38.png)
 
 Verifiquem els canvis:
 
@@ -1051,6 +1056,11 @@ Verifiquem els canvis:
 cat /etc/fstab | grep quota
 ```
 
+![alt text](image-39.png)
+
+Fem un mount
+
+![alt text](image-40.png)
 
 ### 3. Remontar la partició
 
@@ -1061,12 +1071,15 @@ sudo mount -o remount /mnt/datos
 mount | grep /mnt/datos
 ```
 
+![alt text](image-41.png)
 
 ### 4. Crear fitxers de base de dades de quotes
 
 ```bash
 sudo quotacheck -cugm /mnt/datos
 ```
+
+![alt text](image-42.png)
 
 Opcions:
 - **c**: crear fitxers de quota
