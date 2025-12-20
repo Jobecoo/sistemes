@@ -108,7 +108,6 @@ Per a poder fer una comprovació més visual, tenim el gparted
 <img width="775" height="261" alt="image" src="https://github.com/user-attachments/assets/e5a8ee83-f44b-4e25-91aa-f45212d06c24" />
 
 
-- Gestió de processos
 # Gestió d'usuaris i grups i permisos
 
 definir que son usuaris i grups
@@ -384,3 +383,880 @@ I amb el sticky bit no funciona
 
 
 
+
+
+---
+
+# Gestió de Processos
+
+## Introducció
+
+En Linux, un **procés** és una instància d'un programa en execució. Cada procés té un identificador únic anomenat **PID (Process ID)**. El sistema operatiu gestiona aquests processos assignant-los recursos com CPU, memòria i temps d'execució.
+
+La gestió de processos és fonamental per:
+- Monitoritzar l'ús de recursos del sistema
+- Identificar processos que consumeixen massa CPU o memòria
+- Finalitzar processos que no responen
+- Ajustar prioritats d'execució
+- Gestionar tasques en segon pla
+
+## Comandes bàsiques de visualització
+
+### `ps` - Process Status
+
+La comanda `ps` mostra informació sobre els processos actius. L'opció més utilitzada és `ps aux`:
+
+- **a**: mostra processos de tots els usuaris
+- **u**: mostra informació detallada (usuari, %CPU, %MEM)
+- **x**: inclou processos sense terminal associada
+
+[alt text](image.png)
+
+També podem filtrar processos específics utilitzant `grep`:
+
+```bash
+ps aux | grep firefox
+```
+
+![alt text](image-1.png)
+
+Per veure només els processos d'un usuari:
+
+```bash
+ps -u nom_usuari
+```
+
+![alt text](image-2.png)
+
+### `pstree` - Arbre de processos
+
+La comanda `pstree` mostra la jerarquia de processos en forma d'arbre, facilitant la visualització de les relacions pare-fill entre processos.
+
+```bash
+pstree
+```
+
+![alt text](image-3.png)
+
+Per veure també els PIDs:
+
+```bash
+pstree -p
+```
+
+![alt text](image-4.png)
+
+## Monitorització en temps real
+
+### `top` - Monitor de processos
+
+`top` és una eina interactiva que mostra els processos en temps real, actualitzant la informació cada pocs segons. Per defecte, ordena els processos per consum de CPU.
+
+```bash
+top
+```
+
+![alt text](image-5.png)
+
+Tecles útils dins de `top`:
+- **q**: sortir
+- **k**: matar un procés (demana el PID)
+- **M**: ordenar per ús de memòria
+- **P**: ordenar per ús de CPU
+- **h**: ajuda
+
+### `htop` - Monitor millorat
+
+`htop` és una versió millorada de `top` amb una interfície més visual i fàcil d'utilitzar. Permet utilitzar el ratolí i té colors per facilitar la lectura.
+
+```bash
+htop
+```
+
+![alt text](image-6.png)
+
+Funcions principals:
+- **F4**: filtrar processos per nom
+- **F9**: matar un procés (selecciona la senyal)
+- **F6**: ordenar per diferents criteris
+- **F10** o **q**: sortir
+
+![alt text](image-7.png)
+
+### `btop` - Monitor modern
+
+`btop` és una eina de monitorització molt potent i visualment atractiva. Mostra gràfics detallats de CPU, RAM, xarxa i discos.
+
+Primer cal instal·lar-lo:
+
+```bash
+sudo apt install btop
+```
+
+![alt text](image-8.png)
+
+Després executem:
+
+```bash
+btop
+```
+
+![alt text](image-9.png)
+
+Característiques de `btop`:
+- Gràfics animats de CPU i RAM
+- Monitorització de xarxa en temps real
+- Temperatures del sistema
+- Ús del disc
+- Suport per ratolí
+- Interfície personalitzable
+
+## Gestió de processos - Senyals
+
+### `kill` - Finalitzar processos
+
+La comanda `kill` envia senyals als processos. La senyal més comuna és **SIGTERM (15)**, que demana al procés que es tanqui de manera ordenada.
+
+Primer identifiquem el PID del procés:
+
+```bash
+ps aux | grep nom_proces
+```
+
+![alt text](image-10.png)
+
+Després enviem la senyal de terminació:
+
+```bash
+kill PID
+```
+
+![alt text](image-11.png)
+
+### `kill -9` - Terminació forçada
+
+Si un procés no respon a `kill`, podem forçar la seva finalització amb la senyal **SIGKILL (9)**:
+
+```bash
+kill -9 PID
+```
+
+![alt text](image-12.png)
+
+**Diferències entre senyals:**
+
+| Senyal | Número | Descripció |
+|--------|--------|------------|
+| SIGTERM | 15 | Terminació ordenada (per defecte) |
+| SIGKILL | 9 | Terminació forçada immediata |
+| SIGHUP | 1 | Reiniciar procés |
+| SIGSTOP | 19 | Pausar procés |
+| SIGCONT | 18 | Continuar procés pausat |
+
+## Prioritats de processos
+
+### Concepte de prioritat (Nice)
+
+Linux utilitza un sistema de prioritats anomenat **nice** que va de **-20** (màxima prioritat) a **19** (mínima prioritat). Per defecte, els processos s'inicien amb prioritat 0.
+
+- **Valors negatius (-20 a -1)**: Major prioritat (només root)
+- **Valor 0**: Prioritat normal
+- **Valors positius (1 a 19)**: Menor prioritat
+
+### `nice` - Iniciar procés amb prioritat
+
+Per iniciar un procés amb una prioritat específica:
+
+```bash
+nice -n 10 sleep 100 &
+ps -l | grep sleep
+```
+
+![alt text](image-13.png)
+
+
+### `renice` - Canviar prioritat d'un procés existent
+
+Per canviar la prioritat d'un procés que ja està en execució:
+
+```bash
+# Primer iniciem un procés
+sleep 200 &
+# Anotem el PID
+# Canviem la seva prioritat
+sudo renice -n -5 -p PID
+ps -l | grep sleep
+```
+
+![alt text](image-14.png)
+
+## Treballs en segon pla (Background Jobs)
+
+### Executar processos en segon pla amb `&`
+
+Per executar un procés en segon pla (background), afegim `&` al final de la comanda:
+
+```bash
+sleep 300 &
+```
+
+![alt text](image-16.png)
+
+### `jobs` - Llistar treballs
+
+Per veure els treballs en execució en la sessió actual:
+
+```bash
+jobs
+```
+
+![alt text](image-15.png)
+
+Per veure també els PIDs:
+
+```bash
+jobs -l
+```
+
+![alt text](image-17.png)
+
+### `bg` - Continuar en segon pla
+
+Si hem pausat un procés amb **Ctrl+Z**, podem continuar-lo en segon pla:
+
+```bash
+# Iniciem un procés
+sleep 400
+# Premem Ctrl+Z per pausar-lo
+# Després executem:
+bg
+jobs
+```
+
+![alt text](image-18.png)
+
+### `fg` - Portar a primer pla
+
+Per portar un treball de segon pla a primer pla:
+
+```bash
+fg %1
+```
+
+On `%1` és el número del treball mostrat per `jobs`.
+
+![alt text](image-19.png)
+
+## Resum de comandes
+
+| Comanda | Funció |
+|---------|--------|
+| `ps aux` | Llista tots els processos amb detalls |
+| `ps -u usuari` | Processos d'un usuari específic |
+| `pstree` | Arbre jeràrquic de processos |
+| `pstree -p` | Arbre amb PIDs |
+| `top` | Monitor en temps real |
+| `htop` | Monitor millorat interactiu |
+| `btop` | Monitor modern amb gràfics |
+| `kill PID` | Finalitzar procés (SIGTERM) |
+| `kill -9 PID` | Forçar finalització (SIGKILL) |
+| `nice -n X comanda` | Iniciar amb prioritat X |
+| `renice -n X -p PID` | Canviar prioritat a X |
+| `comanda &` | Executar en segon pla |
+| `jobs` | Llistar treballs actius |
+| `jobs -l` | Llistar treballs amb PIDs |
+| `bg` | Continuar treball en segon pla |
+| `fg %N` | Portar treball N a primer pla |
+| `Ctrl+Z` | Pausar procés actual |
+
+---
+
+
+---
+
+# Còpies de Seguretat i Automatització de Tasques
+
+## Introducció
+
+Les còpies de seguretat (backups) són essencials per protegir les dades davant de pèrdues accidentals, fallades de maquinari o atacs maliciosos. L'automatització d'aquestes tasques garanteix que es realitzin de manera regular sense intervenció manual.
+
+En aquesta secció aprendrem:
+- Comandes per crear còpies de seguretat (`tar`, `rsync`)
+- Automatització de tasques amb `cron` i `anacron`
+- Scripts per automatitzar backups
+- Diferències entre Cron i Anacron
+
+---
+
+## Comandes de Backup
+
+### `tar` - Arxius comprimits
+
+`tar` (Tape Archive) és una eina per crear arxius que agrupen múltiples fitxers i directoris en un sol fitxer. Pot comprimir-los per estalviar espai.
+
+#### Crear un arxiu tar
+
+```bash
+tar -cvf backup.tar /ruta/directori/
+```
+
+Opcions:
+- **c**: crear arxiu
+- **v**: verbose (mostra el progrés)
+- **f**: especifica el nom del fitxer
+
+![alt text](image-21.png)
+
+#### Crear arxiu tar comprimit amb gzip
+
+```bash
+tar -czvf backup.tar.gz /ruta/directori/
+```
+
+Opcions addicionals:
+- **z**: comprimir amb gzip
+
+![alt text](image-20.png)
+
+#### Llistar contingut d'un tar
+
+```bash
+tar -tvf backup.tar.gz
+```
+
+Opcions:
+- **t**: llistar contingut
+- **v**: mode verbose
+
+![alt text](image-22.png)
+
+#### Extreure un arxiu tar
+
+```bash
+tar -xzvf backup.tar.gz -C /ruta/destino/
+```
+
+Opcions:
+- **x**: extreure
+- **C**: especificar directori de destinació
+
+![alt text](image-23.png)
+
+### `rsync` - Sincronització de fitxers
+
+`rsync` és una eina potent per sincronitzar fitxers i directoris entre ubicacions. És més eficient que `cp` perquè només copia els canvis.
+
+#### Sincronització bàsica
+
+```bash
+rsync -av /origen/ /destino/
+```
+
+Opcions:
+- **a**: mode arxiu (preserva permisos, timestamps, etc.)
+- **v**: verbose
+
+![alt text](image-24.png)
+
+---
+
+## Automatització de Tasques
+
+### Cron - Programador de tasques
+
+**Cron** és un dimoni (servei) que executa tasques programades a hores específiques. És ideal per sistemes que estan sempre encesos.
+
+#### Estructura de crontab
+
+El format d'una línia crontab és:
+
+```
+* * * * * comanda_a_executar
+│ │ │ │ │
+│ │ │ │ └─── Dia de la setmana (0-7, 0 i 7 són diumenge)
+│ │ │ └───── Mes (1-12)
+│ │ └─────── Dia del mes (1-31)
+│ └───────── Hora (0-23)
+└─────────── Minut (0-59)
+```
+
+**Exemples:**
+- `0 2 * * *` - Cada dia a les 2:00 AM
+- `*/15 * * * *` - Cada 15 minuts
+- `0 0 * * 0` - Cada diumenge a mitjanit
+- `30 3 1 * *` - Dia 1 de cada mes a les 3:30 AM
+
+#### Veure /etc/crontab
+
+```bash
+cat /etc/crontab
+```
+
+![alt text](image-25.png)
+
+#### Editar crontab d'usuari
+
+```bash
+crontab -e
+```
+
+Obre l'editor per afegir tasques del usuari actual.
+
+![alt text](image-26.png)
+
+#### Exemple: Script de backup automatitzat
+
+Creem un script que faci backup automàtic:
+
+```bash
+#!/bin/bash
+FECHA=$(date +%Y%m%d_%H%M%S)
+tar -czf /backup/backup_$FECHA.tar.gz /home/usuario/datos/
+echo "Backup creat: $FECHA" >> /var/log/backup.log
+```
+
+![alt text](image-27.png)
+
+Afegim al crontab per executar cada dia a les 2 AM:
+
+```
+0 2 * * * /home/usuario/backup_script.sh
+```
+
+![alt text](image-28.png)
+
+#### Verificar logs de cron
+
+```bash
+sudo grep CRON /var/log/syslog | tail -n 20
+```
+
+![alt text](image-33.png)
+
+---
+
+### Anacron - Tasques periòdiques
+
+**Anacron** està dissenyat per sistemes que no estan sempre encesos (portàtils, PCs d'escriptori). Executa tasques pendents quan el sistema arranca.
+
+#### Diferències Cron vs Anacron
+
+| Característica | Cron | Anacron |
+|----------------|------|---------|
+| **Precisió** | Hora exacta | Dia aproximat |
+| **Requisit** | Sistema sempre encès | Pot estar apagat |
+| **Ús típic** | Servidors | Portàtils, PCs |
+| **Granularitat** | Minuts | Dies |
+| **Execució perduda** | No es recupera | S'executa al arrancar |
+
+
+#### Configuració d'anacron
+
+```bash
+cat /etc/anacrontab
+```
+
+![alt text](image-29.png)
+
+Format d'anacrontab:
+```
+període_dies   retard_minuts   identificador   comanda
+```
+
+Exemple:
+```
+1    5    cron.daily    run-parts /etc/cron.daily
+7    10   cron.weekly   run-parts /etc/cron.weekly
+```
+
+#### Directoris de scripts automàtics
+
+Linux té directoris predefinits per scripts que s'executen automàticament:
+
+```bash
+ls -l /etc/cron.daily/
+ls -l /etc/cron.weekly/
+ls -l /etc/cron.monthly/
+```
+
+![alt text](image-30.png)
+
+Qualsevol script executable en aquests directoris s'executarà automàticament.
+
+#### Crear script en cron.daily
+
+```bash
+sudo nano /etc/cron.daily/cleanup_temp
+```
+
+Contingut del script:
+```bash
+#!/bin/bash
+find /tmp -type f -mtime +7 -delete
+echo "Neteja executada: $(date)" >> /var/log/cleanup.log
+```
+
+Donar permisos:
+```bash
+sudo chmod +x /etc/cron.daily/cleanup_temp
+```
+
+![alt text](image-31.png)
+---
+
+### Directori /etc/cron.d/
+
+Aquest directori permet crear fitxers de configuració cron personalitzats amb el mateix format que `/etc/crontab`.
+
+```bash
+sudo nano /etc/cron.d/backup_personalitzat
+```
+
+Contingut:
+```
+30 3 * * * root /home/usuario/backup_script.sh
+```
+
+![alt text](image-32.png)
+
+---
+
+
+
+---
+
+## Resum de comandes
+
+| Comanda | Funció |
+|---------|--------|
+| `tar -cvf arxiu.tar dir/` | Crear arxiu tar |
+| `tar -czvf arxiu.tar.gz dir/` | Crear tar comprimit |
+| `tar -xzvf arxiu.tar.gz` | Extreure tar comprimit |
+| `tar -tvf arxiu.tar.gz` | Llistar contingut |
+| `rsync -av origen/ desti/` | Sincronitzar directoris |
+| `rsync -av --delete origen/ desti/` | Sincronitzar i eliminar obsolets |
+| `rsync -av --dry-run origen/ desti/` | Simular sincronització |
+| `crontab -e` | Editar tasques cron |
+| `crontab -l` | Llistar tasques cron |
+| `cat /etc/crontab` | Veure crontab del sistema |
+| `cat /etc/anacrontab` | Veure configuració anacron |
+| `/etc/cron.daily/` | Scripts diaris |
+| `/etc/cron.weekly/` | Scripts setmanals |
+| `/etc/cron.monthly/` | Scripts mensuals |
+| `/etc/cron.d/` | Configuracions cron personalitzades |
+
+---
+
+
+
+---
+
+# Quotes de Disc
+
+## Introducció
+
+Les **quotes de disc** (disk quotas) són un mecanisme del sistema operatiu que permet limitar la quantitat d'espai de disc que un usuari o grup pot utilitzar en una partició. Això és essencial en entorns multiusuari per:
+
+- Evitar que un usuari ompli tot el disc
+- Distribuir equitativament l'espai disponible
+- Controlar el creixement de dades
+- Prevenir atacs de denegació de servei (DoS)
+
+En aquesta secció aprendrem:
+- Instal·lar i configurar el sistema de quotes
+- Establir límits per usuaris i grups
+- Monitoritzar l'ús de quotes
+- Provar els límits configurats
+
+---
+
+## Conceptes bàsics
+
+### Tipus de límits
+
+Les quotes de disc tenen dos tipus de límits:
+
+| Tipus | Descripció | Comportament |
+|-------|------------|--------------|
+| **Soft Limit** | Límit tou o flexible | Es pot excedir temporalment amb advertències. Té un període de gràcia (normalment 7 dies) |
+| **Hard Limit** | Límit dur o absolut | NO es pot excedir mai. El sistema bloqueja l'escriptura quan s'arriba a aquest límit |
+
+### Mètriques de quota
+
+Les quotes es poden aplicar a:
+
+- **Blocks**: Espai de disc utilitzat (normalment mesurat en KB o MB)
+- **Inodes**: Nombre de fitxers i directoris creats
+
+---
+
+## Instal·lació
+
+### Instal·lar el paquet quota
+
+```bash
+sudo apt update
+sudo apt install quota
+```
+
+
+---
+
+## Configuració
+
+### 1. Preparar la partició
+
+Primer identifiquem les particions disponibles:
+
+```bash
+df -h
+lsblk
+```
+
+
+Creem un directori de dades (si no existeix):
+
+```bash
+sudo mkdir -p /mnt/datos
+```
+
+
+### 2. Editar /etc/fstab
+
+Per activar les quotes, hem d'afegir les opcions `usrquota` i `grpquota` a la partició en `/etc/fstab`.
+
+Abans de modificar, veiem el contingut actual:
+
+```bash
+cat /etc/fstab
+```
+
+
+Editem el fitxer:
+
+```bash
+sudo nano /etc/fstab
+```
+
+Afegim les opcions a la línia de la partició:
+
+```
+/dev/sdb1  /mnt/datos  ext4  defaults,usrquota,grpquota  0  2
+```
+
+
+Verifiquem els canvis:
+
+```bash
+cat /etc/fstab | grep quota
+```
+
+
+### 3. Remontar la partició
+
+Apliquem els canvis remuntant la partició:
+
+```bash
+sudo mount -o remount /mnt/datos
+mount | grep /mnt/datos
+```
+
+
+### 4. Crear fitxers de base de dades de quotes
+
+```bash
+sudo quotacheck -cugm /mnt/datos
+```
+
+Opcions:
+- **c**: crear fitxers de quota
+- **u**: comprovar quotes d'usuari
+- **g**: comprovar quotes de grup
+- **m**: no remontar en mode només lectura
+
+Verifiquem que s'han creat els fitxers:
+
+```bash
+ls -l /mnt/datos/aquota.*
+```
+
+
+### 5. Activar les quotes
+
+```bash
+sudo quotaon /mnt/datos
+```
+
+Verifiquem que estan actives:
+
+```bash
+sudo quotaon -p /mnt/datos
+```
+
+
+---
+
+## Establir quotes per usuaris
+
+### Crear usuari de prova
+
+```bash
+sudo adduser testquota
+sudo mkdir /mnt/datos/testquota
+sudo chown testquota:testquota /mnt/datos/testquota
+```
+
+
+### Editar quota de l'usuari
+
+```bash
+sudo edquota -u testquota
+```
+
+S'obrirà un editor (vim o nano) amb aquest format:
+
+```
+Filesystem  blocks  soft    hard    inodes  soft  hard
+/dev/sdb1   0       10000   15000   0       100   150
+```
+
+On:
+- **blocks**: Espai actual utilitzat
+- **soft/hard (blocks)**: Límits en KB (10MB soft, 15MB hard)
+- **inodes**: Nombre de fitxers actual
+- **soft/hard (inodes)**: Límits de fitxers (100 soft, 150 hard)
+
+
+### Verificar quota establerta
+
+```bash
+sudo quota -u testquota
+```
+
+
+### Veure reporte de totes les quotes
+
+```bash
+sudo repquota -a
+```
+
+
+---
+
+## Provar les quotes
+
+### Canviar a l'usuari de prova
+
+```bash
+su - testquota
+cd /mnt/datos/testquota
+```
+
+### Crear fitxer dins del límit
+
+```bash
+dd if=/dev/zero of=archivo1.dat bs=1M count=5
+ls -lh
+```
+
+
+### Verificar ús de quota
+
+```bash
+quota
+```
+
+
+### Excedir el límit soft
+
+```bash
+dd if=/dev/zero of=archivo2.dat bs=1M count=8
+quota
+```
+
+Veurem un missatge d'advertència indicant que s'ha excedit el límit soft.
+
+
+### Intentar excedir el límit hard
+
+```bash
+dd if=/dev/zero of=archivo3.dat bs=1M count=10
+```
+
+Obtindrem un error: **"Disk quota exceeded"**
+
+
+---
+
+## Quotes de grup
+
+### Crear grup i establir quota
+
+```bash
+sudo groupadd proyectoA
+sudo edquota -g proyectoA
+```
+
+
+### Verificar quota de grup
+
+```bash
+sudo quota -g proyectoA
+```
+
+
+---
+
+## Gestió de quotes
+
+### Desactivar quotes
+
+```bash
+sudo quotaoff /mnt/datos
+```
+
+### Reactivar quotes
+
+```bash
+sudo quotaon /mnt/datos
+```
+
+
+### Comprovar estat de quotes
+
+```bash
+sudo quotaon -p /mnt/datos
+```
+
+Mostra si les quotes estan actives o no.
+
+---
+
+## Resum de comandes
+
+| Comanda | Funció |
+|---------|--------|
+| `apt install quota` | Instal·lar paquet de quotes |
+| `quotacheck -cugm /particio` | Crear fitxers de base de dades |
+| `quotaon /particio` | Activar quotes |
+| `quotaoff /particio` | Desactivar quotes |
+| `quotaon -p /particio` | Veure estat de quotes |
+| `edquota -u usuari` | Editar quota d'usuari |
+| `edquota -g grup` | Editar quota de grup |
+| `quota -u usuari` | Veure quota d'usuari |
+| `quota -g grup` | Veure quota de grup |
+| `quota` | Veure quota de l'usuari actual |
+| `repquota -a` | Reporte de totes les quotes |
+| `repquota /particio` | Reporte de quotes d'una partició |
+
+---
+
+## Bones pràctiques
+
+1. **Establir límits realistes**: Els límits han de ser adequats a les necessitats dels usuaris
+2. **Soft < Hard**: El límit soft sempre ha de ser menor que el hard
+3. **Monitoritzar regularment**: Revisar periòdicament l'ús de quotes amb `repquota`
+4. **Notificar als usuaris**: Informar quan s'apropin als límits
+5. **Període de gràcia**: Configurar un període raonable (per defecte 7 dies)
+6. **Backups abans de canvis**: Fer còpia de seguretat abans de modificar quotes
+7. **Documentar límits**: Mantenir un registre dels límits assignats a cada usuari/grup
