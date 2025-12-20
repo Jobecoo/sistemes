@@ -1080,6 +1080,7 @@ Verifiquem que s'han creat els fitxers:
 ls -l /mnt/datos/aquota.*
 ```
 
+![alt text](image-43.png)
 
 ### 5. Activar les quotes
 
@@ -1093,6 +1094,7 @@ Verifiquem que estan actives:
 sudo quotaon -p /mnt/datos
 ```
 
+![alt text](image-44.png)
 
 ---
 
@@ -1106,6 +1108,7 @@ sudo mkdir /mnt/datos/testquota
 sudo chown testquota:testquota /mnt/datos/testquota
 ```
 
+![alt text](image-45.png)
 
 ### Editar quota de l'usuari
 
@@ -1126,6 +1129,7 @@ On:
 - **inodes**: Nombre de fitxers actual
 - **soft/hard (inodes)**: Límits de fitxers (100 soft, 150 hard)
 
+![alt text](image-46.png)
 
 ### Verificar quota establerta
 
@@ -1133,6 +1137,7 @@ On:
 sudo quota -u testquota
 ```
 
+![alt text](image-47.png)
 
 ### Veure reporte de totes les quotes
 
@@ -1140,6 +1145,7 @@ sudo quota -u testquota
 sudo repquota -a
 ```
 
+![alt text](image-48.png)
 
 ---
 
@@ -1159,6 +1165,7 @@ dd if=/dev/zero of=archivo1.dat bs=1M count=5
 ls -lh
 ```
 
+![alt text](image-51.png)
 
 ### Verificar ús de quota
 
@@ -1166,6 +1173,7 @@ ls -lh
 quota
 ```
 
+![alt text](image-52.png)
 
 ### Excedir el límit soft
 
@@ -1176,6 +1184,8 @@ quota
 
 Veurem un missatge d'advertència indicant que s'ha excedit el límit soft.
 
+![alt text](image-53.png)
+
 
 ### Intentar excedir el límit hard
 
@@ -1185,6 +1195,7 @@ dd if=/dev/zero of=archivo3.dat bs=1M count=10
 
 Obtindrem un error: **"Disk quota exceeded"**
 
+![alt text](image-54.png)
 
 ---
 
@@ -1251,12 +1262,3 @@ Mostra si les quotes estan actives o no.
 
 ---
 
-## Bones pràctiques
-
-1. **Establir límits realistes**: Els límits han de ser adequats a les necessitats dels usuaris
-2. **Soft < Hard**: El límit soft sempre ha de ser menor que el hard
-3. **Monitoritzar regularment**: Revisar periòdicament l'ús de quotes amb `repquota`
-4. **Notificar als usuaris**: Informar quan s'apropin als límits
-5. **Període de gràcia**: Configurar un període raonable (per defecte 7 dies)
-6. **Backups abans de canvis**: Fer còpia de seguretat abans de modificar quotes
-7. **Documentar límits**: Mantenir un registre dels límits assignats a cada usuari/grup
