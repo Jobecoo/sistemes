@@ -632,7 +632,7 @@ A la pestanya **"Unix"**:
 - **User name**: `ajoan`
 - **UID number**: `2001`
 - **Primary group**: Selecciona un grup o deixa per defecte
-- **Home directory**: `/home/prof1`
+- **Home directory**: `/home/ajoan`
 - **Login shell**: `/bin/bash`
 
 A la pestanya **"Password"**:
@@ -668,15 +668,338 @@ ajoan:x:2001:2001:ajoan:/home/ajoan:/bin/bash
 ### 2. Iniciar sessió amb el nou usuari
 
 Reinicia el client i inicia sessió amb:
-- **Usuari**: `prof1`
+- **Usuari**: `ajoan`
 - **Contrasenya**: La que has configurat
 
 ![alt text](image-49.png)
 
 ---
 
+## Activitats Pràctiques: Gestió d'Entrades LDAP
+
+En aquesta secció realitzarem activitats pràctiques amb les comandes principals de gestió LDAP: `ldapsearch`, `ldapadd`, `ldapmodify` i `ldapdelete`.
+
+### LDIF Base per a les Activitats
+
+Primer, crearem un fitxer LDIF complet que inclou una estructura organitzativa amb diversos elements. Aquest serà el punt de partida per a les nostres activitats.
+
+```bash
+nano estructura_completa.ldif
+```
+
+Contingut del fitxer `exemple.ldif`:
+
+```ldif
+# Unitat Organitzativa: Departaments
+dn: ou=Departaments,dc=joan,dc=cat
+objectClass: organizationalUnit
+ou: Departaments
+description: Departaments de l'empresa
+
+# Unitat Organitzativa: Informàtica
+dn: ou=Informatica,ou=Departaments,dc=joan,dc=cat
+objectClass: organizationalUnit
+ou: Informatica
+description: Departament d'Informàtica
+
+# Unitat Organitzativa: Vendes
+dn: ou=Vendes,ou=Departaments,dc=joan,dc=cat
+objectClass: organizationalUnit
+ou: Vendes
+description: Departament de Vendes
+
+# Grup: Administradors
+dn: cn=Administradors,ou=Informatica,ou=Departaments,dc=joan,dc=cat
+objectClass: posixGroup
+cn: Administradors
+gidNumber: 5001
+description: Grup d'administradors del sistema
+
+# Grup: Desenvolupadors
+dn: cn=Desenvolupadors,ou=Informatica,ou=Departaments,dc=joan,dc=cat
+objectClass: posixGroup
+cn: Desenvolupadors
+gidNumber: 5002
+description: Grup de desenvolupadors
+
+# Grup: Comercials
+dn: cn=Comercials,ou=Vendes,ou=Departaments,dc=joan,dc=cat
+objectClass: posixGroup
+cn: Comercials
+gidNumber: 5003
+description: Grup de comercials
+
+# Usuari: Maria Garcia (Administradora)
+dn: uid=mgarcia,ou=Informatica,ou=Departaments,dc=joan,dc=cat
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: mgarcia
+cn: Maria Garcia
+sn: Garcia
+givenName: Maria
+mail: mgarcia@joan.cat
+uidNumber: 3001
+gidNumber: 5001
+homeDirectory: /home/mgarcia
+loginShell: /bin/bash
+userPassword: {SSHA}XYZ123
+
+# Usuari: Pere Martí (Desenvolupador)
+dn: uid=pmarti,ou=Informatica,ou=Departaments,dc=joan,dc=cat
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: pmarti
+cn: Pere Marti
+sn: Marti
+givenName: Pere
+mail: pmarti@joan.cat
+telephoneNumber: +34 123 456 789
+uidNumber: 3002
+gidNumber: 5002
+homeDirectory: /home/pmarti
+loginShell: /bin/bash
+userPassword: {SSHA}ABC456
+
+# Usuari: Laura Sánchez (Comercial)
+dn: uid=lsanchez,ou=Vendes,ou=Departaments,dc=joan,dc=cat
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: lsanchez
+cn: Laura Sanchez
+sn: Sanchez
+givenName: Laura
+mail: lsanchez@joan.cat
+telephoneNumber: +34 987 654 321
+uidNumber: 3003
+gidNumber: 5003
+homeDirectory: /home/lsanchez
+loginShell: /bin/bash
+userPassword: {SSHA}DEF789
+```
+
+Afegir l'estructura completa al directori LDAP:
+
+![alt text](image-50.png)
+
+```bash
+ldapadd -c -x -D "cn=admin,dc=joan,dc=cat" -W -f exemple.ldif
+```
+
+![alt text](image-51.png)
+
+---
 
 
+### Activitat 1: Cerques amb `ldapsearch`
+
+La comanda `ldapsearch` permet cercar i consultar entrades al directori LDAP.
+
+#### 1.1. Llistar totes les entrades del directori
+
+```bash
+ldapsearch -x -LLL -b "dc=joan,dc=cat"
+```
+
+**Explicació**:
+- `-x`: Autenticació simple
+- `-LLL`: Format de sortida LDIF simplificat
+- `-b`: Base DN per a la cerca
+
+![alt text](image-52.png)
+
+#### 1.2. Cercar tots els usuaris
+
+```bash
+ldapsearch -x -LLL -b "dc=joan,dc=cat" "(objectClass=posixAccount)"
+```
+
+![alt text](image-53.png)
+
+#### 1.3. Cercar un usuari específic
+
+```bash
+ldapsearch -x -LLL -b "dc=joan,dc=cat" "(uid=mgarcia)"
+```
+
+![alt text](image-54.png)
+
+#### 1.4. Cercar tots els grups
+
+```bash
+ldapsearch -x -LLL -b "dc=joan,dc=cat" "(objectClass=posixGroup)"
+```
+![alt text](image-55.png)
+
+#### 1.5. Cercar usuaris del departament d'Informàtica
+
+```bash
+ldapsearch -x -LLL -b "ou=Informatica,ou=Departaments,dc=joan,dc=cat" "(objectClass=posixAccount)"
+```
+![alt text](image-56.png)
+
+#### 1.6. Cercar usuaris amb un atribut específic (correu electrònic)
+
+```bash
+ldapsearch -x -LLL -b "dc=joan,dc=cat" "(mail=*@joan.cat)" mail cn
+```
+![alt text](image-57.png)
+
+### Activitat 2: Afegir entrades amb `ldapadd`
+
+La comanda `ldapadd` permet afegir noves entrades al directori LDAP.
+
+#### 2.1. Afegir un nou departament
+
+Crear el fitxer `noudept.ldif`:
+
+```bash
+nano noudept.ldif
+```
+
+Contingut:
+
+```ldif
+dn: ou=RRHH,ou=Departaments,dc=joan,dc=cat
+objectClass: organizationalUnit
+ou: RRHH
+description: Departament de Recursos Humans
+```
+
+![alt text](image-58.png)
+
+Afegir al directori:
+
+```bash
+ldapadd -x -D "cn=admin,dc=joan,dc=cat" -W -f noudept.ldif
+```
+
+![alt text](image-59.png)
+
+Verificar:
+
+```bash
+ldapsearch -x -LLL -b "dc=joan,dc=cat" "(ou=RRHH)"
+```
+![alt text](image-60.png)
 
 
+### Activitat 3: Modificar entrades amb `ldapmodify`
 
+La comanda `ldapmodify` permet modificar atributs d'entrades existents. Utilitzarem el mateix fitxer `exemple.ldif` per afegir-hi les modificacions.
+
+#### 3.1. Modificar el telèfon d'un usuari
+
+Editar el fitxer `exemple.ldif` i afegir al final:
+
+```bash
+nano exemple.ldif
+```
+
+Afegir al final del fitxer:
+
+```ldif
+dn: uid=pmarti,ou=Informatica,ou=Departaments,dc=joan,dc=cat
+changetype: modify
+replace: telephoneNumber
+telephoneNumber: +34 555 666 777
+```
+
+![alt text](image-61.png)
+
+Aplicar la modificació:
+
+```bash
+ldapmodify -x -D "cn=admin,dc=joan,dc=cat" -W -f exemple.ldif
+```
+
+Verificar: `ldapsearch -x -LLL -b "dc=joan,dc=cat" "(uid=pmarti)" telephoneNumber`
+
+![alt text](image-62.png)
+
+#### 3.2. Afegir un atribut a un usuari
+
+Editar el mateix fitxer i afegir:
+
+```ldif
+dn: uid=lsanchez,ou=Vendes,ou=Departaments,dc=joan,dc=cat
+changetype: modify
+add: description
+description: Responsable de vendes a Catalunya
+```
+
+Aplicar: `ldapmodify -x -D "cn=admin,dc=joan,dc=cat" -W -f exemple.ldif`
+
+Verificar: `ldapsearch -x -LLL -b "dc=joan,dc=cat" "(uid=lsanchez)" description`
+
+![alt text](image-63.png)
+
+#### 3.3. Eliminar un atribut d'un usuari
+
+Afegir al mateix fitxer:
+
+```ldif
+dn: uid=pmarti,ou=Informatica,ou=Departaments,dc=joan,dc=cat
+changetype: modify
+delete: telephoneNumber
+```
+
+Aplicar: `ldapmodify -x -D "cn=admin,dc=joan,dc=cat" -W -f exemple.ldif`
+
+Verificar: `ldapsearch -x -LLL -b "dc=joan,dc=cat" "(uid=pmarti)" telephoneNumber`
+
+![alt text](image-64.png)
+
+### Activitat 4: Eliminar entrades amb `ldapdelete`
+
+La comanda `ldapdelete` permet eliminar entrades del directori LDAP.
+
+> [!CAUTION]
+> Les operacions d'eliminació són irreversibles. Assegura't sempre abans d'eliminar.
+
+#### 4.1. Eliminar un usuari
+
+Verificar que existeix: `ldapsearch -x -LLL -b "dc=joan,dc=cat" "(uid=pmarti)"`
+
+Eliminar:
+
+```bash
+ldapdelete -x -D "cn=admin,dc=joan,dc=cat" -W "uid=pmarti,ou=Informatica,ou=Departaments,dc=joan,dc=cat"
+```
+
+![alt text](image-65.png)
+
+#### 4.2. Eliminar un grup
+
+Verificar que existeix: `ldapsearch -x -LLL -b "dc=joan,dc=cat" "(cn=Desenvolupadors)"`
+
+Eliminar:
+
+```bash
+ldapdelete -x -D "cn=admin,dc=joan,dc=cat" -W "cn=Desenvolupadors,ou=Informatica,ou=Departaments,dc=joan,dc=cat"
+```
+
+![alt text](image-66.png)
+
+
+## Resum de Comandes
+
+| Comanda | Funció | Exemple |
+|---------|--------|---------|
+| `ldapsearch` | Cercar entrades | `ldapsearch -x -LLL -b "dc=joan,dc=cat" "(uid=usuari)"` |
+| `ldapadd` | Afegir entrades | `ldapadd -x -D "cn=admin,dc=joan,dc=cat" -W -f fitxer.ldif` |
+| `ldapmodify` | Modificar entrades | `ldapmodify -x -D "cn=admin,dc=joan,dc=cat" -W -f modif.ldif` |
+| `ldapdelete` | Eliminar entrades | `ldapdelete -x -D "cn=admin,dc=joan,dc=cat" -W "dn_a_eliminar"` |
+
+### Opcions comunes
+
+- `-x`: Autenticació simple
+- `-D`: DN de l'usuari que executa l'operació (normalment admin)
+- `-W`: Demanar contrasenya de forma interactiva
+- `-w`: Especificar contrasenya a la línia de comandes (menys segur)
+- `-f`: Fitxer LDIF a processar
+- `-b`: Base DN per a cerques
+- `-LLL`: Format de sortida LDIF simplificat (només ldapsearch)
+- `-c`: Continuar malgrat errors (ldapadd)
