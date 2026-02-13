@@ -1546,19 +1546,7 @@ Aixo:
 
 Repeteix per a la resta d'usuaris:
 
-```bash
-smbpasswd -a joaquin
-smbpasswd -a jessica  
-smbpasswd -a joel
-smbpasswd -a mgarcia
-smbpasswd -a lsanchez
-```
 
-> [!CAUTION]
-> **⚠️ CAPTURA QUE FALTA**: Cal afegir una captura de pantalla mostrant l'execució de `smbpasswd -a` per almenys un usuari LDAP (per exemple `javier`), on es vegi:
-> - La comanda `smbpasswd -a javier`
-> - El missatge "New SMB password:" i "Retype new SMB password:"
-> - El missatge "Added user javier."
 
 ---
 
@@ -1797,8 +1785,6 @@ Afegim la línia:
 
 ![Configuració /etc/exports](image-101.png)
 
-> [!CAUTION]
-> **⚠️ CAPTURA QUE FALTA**: Cal afegir una captura de pantalla executant `exportfs -ra` per aplicar els canvis de `/etc/exports` i després `exportfs -v` per verificar les exportacions actives.
 
 
 Creem un fitxer de prova dins del directori exportat i apliquem les exportacions:
@@ -1885,9 +1871,7 @@ El resultat mostra: `drwxrwxrwx 2 nobody nogroup 4096 feb 10 13:08 prova`
 
 ![Proves de funcionament NFS](image-107.png)
 
-> [!CAUTION]
-> **⚠️ CAPTURES QUE FALTEN**: Cal afegir captures mostrant:
-> 1. **Crear un fitxer/directori** des del client dins del recurs muntat
+
 
 #### 3. Verificar connectivitat
 
