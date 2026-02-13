@@ -1627,8 +1627,7 @@ Hauria de mostrar:
 javier:x:2001:2001:Francisco Javier:/home/javier:/bin/bash
 ```
 
-> [!CAUTION]
-> **⚠️ CAPTURA QUE FALTA**: Cal afegir una captura de pantalla executant `getent passwd javier` i mostrant el resultat amb les dades de l'usuari LDAP.
+
 
 
 #### 6.3. Afegir usuari LDAP a Samba
