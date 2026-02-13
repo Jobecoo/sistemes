@@ -1003,3 +1003,1338 @@ ldapdelete -x -D "cn=admin,dc=joan,dc=cat" -W "cn=Desenvolupadors,ou=Informatica
 - `-b`: Base DN per a cerques
 - `-LLL`: Format de sortida LDIF simplificat (només ldapsearch)
 - `-c`: Continuar malgrat errors (ldapadd)
+
+
+
+
+
+
+---
+
+# Servidor Samba
+
+## Introducció a Samba
+
+**Samba** és un conjunt de programes que permet compartir recursos (fitxers, impressores, etc.) entre sistemes Linux/Unix i Windows utilitzant el protocol SMB/CIFS (Server Message Block / Common Internet File System).
+
+### Característiques principals
+
+- **Compatibilitat multiplataforma**: Permet compartir recursos entre Linux i Windows de forma transparent
+- **Autenticació a nivell d'usuari**: Cada usuari ha de autenticar-se amb credencials específiques (a diferència de NFS que treballa a nivell de host)
+- **Control d'accés granular**: Es poden definir permisos específics per a cada usuari o grup
+- **Integració amb Active Directory i LDAP**: Pot utilitzar serveis de directori per a la gestió d'usuaris
+
+### Diferències entre Samba i NFS
+
+| Característica | Samba | NFS |
+|----------------|-------|-----|
+| Autenticació | **A nivell d'usuari** | A nivell de host |
+| Compatibilitat | Linux i Windows | Principalment Linux/Unix |
+| Protocol | SMB/CIFS | NFS |
+| Seguretat | Més granular | Més simple |
+
+---
+
+## Configuració del Servidor Samba
+
+### 1. Instal·lació de Samba
+
+Al **servidor**, instal·lem el paquet Samba:
+
+```bash
+apt install samba
+```
+
+![Instal·lació de Samba](image-67.png)
+
+Durant la instal·lació es crearan automàticament:
+- El servei `smbd` (Server Message Block daemon)
+- El servei `nmbd` (NetBIOS Name Server)
+- El fitxer de configuració `/etc/samba/smb.conf`
+
+---
+
+### 2. Creació de la Carpeta Compartida
+
+Crearem una carpeta anomenada `/asixa` que serà compartida a través de Samba.
+
+```bash
+cd /
+mkdir asixa
+chmod 777 asixa
+chown nobody:nogroup asixa/
+```
+
+**Explicació dels permisos**:
+- `chmod 777`: Atorga permisos complets (lectura, escriptura, execució) a tothom
+- `chown nobody:nogroup`: Canvia el propietari i grup a `nobody`/`nogroup` (usuari genèric del sistema)
+
+Verifiquem que s'ha creat correctament:
+
+```bash
+ls -l | grep asixa
+```
+
+![Creació i configuració de permisos de la carpeta asixa](image-68.png)
+
+---
+
+### 3. Creació d'Usuaris i Grups
+
+Crearem tres usuaris per realitzar proves amb diferents permisos:
+
+```bash
+useradd -M -s /sbin/nologin edgar
+useradd -M -s /sbin/nologin naim
+useradd -M -s /sbin/nologin eros
+```
+
+**Opcions utilitzades**:
+- `-M`: No crear directori home (no necessari per a usuaris només de Samba)
+- `-s /sbin/nologin`: No permetre login al sistema (només accés Samba)
+
+Creem un grup anomenat `madrid` i hi afegim els usuaris `eros` i `edgar`:
+
+```bash
+addgroup madrid
+adduser edgar madrid
+adduser eros madrid
+```
+
+Verifiquem que els usuaris s'han creat correctament:
+
+```bash
+tail -3 /etc/passwd
+```
+
+![Creació d'usuaris i grup madrid](image-69.png)
+
+---
+
+### 4. Configuració del Recurs Compartit
+
+Editem el fitxer de configuració principal de Samba:
+
+```bash
+nano /etc/samba/smb.conf
+```
+
+Al final del fitxer, afegim la configuració del nostre recurs compartit:
+
+```ini
+[asixa]
+path=/asixa
+guest ok = yes
+directory mask = 0755
+create mask = 0644
+browseable = yes
+read only = no
+writable = yes
+read list = @madrid, naim, guest
+write list = naim, guest
+invalid users = edgar
+```
+
+**Explicació dels paràmetres**:
+
+| Paràmetre | Valor | Significat |
+|-----------|-------|------------|
+| `path` | `/asixa` | Ruta al directori compartit |
+| `guest ok` | `yes` | Permet accés anònim (sense contrasenya) |
+| `directory mask` | `0755` | Permisos per als directoris creats (rwxr-xr-x) |
+| `create mask` | `0644` | Permisos per als fitxers creats (rw-r--r--) |
+| `browseable` | `yes` | El recurs apareix a la llista de recursos compartits |
+| `read only` | `no` | No és només lectura |
+| `writable` | `yes` | Es permet escriptura |
+| `read list` | `@madrid, naim, guest` | Usuaris/grups amb permís de lectura |
+| `write list` | `naim, guest` | Usuaris/grups amb permís d'escriptura |
+| `invalid users` | `edgar` | Usuaris explícitament bloquejats |
+
+> [!NOTE]
+> El símbol `@` davant de `madrid` indica que és un **grup**, no un usuari individual.
+
+![Configuració del recurs compartit asixa](image-72.png)
+
+---
+
+### 5. Assignació de Contrasenyes Samba
+
+Samba utilitza una base de dades de contrasenyes pròpia, independent de les contrasenyes del sistema. Per tant, hem de crear contrasenyes específiques per a cada usuari:
+
+```bash
+smbpasswd -a edgar
+smbpasswd -a eros
+smbpasswd -a naim
+```
+
+**Opció `-a`**: Afegeix un nou usuari a la base de dades de Samba.
+
+![Assignació de contrasenyes Samba](image-77.png)
+
+---
+
+### 6. Reinici i Verificació del Servei
+
+Reiniciem els serveis de Samba per aplicar els canvis:
+
+```bash
+systemctl restart smbd nmbd
+```
+
+Comprovem l'estat dels serveis:
+
+```bash
+systemctl status smbd nmbd
+```
+
+Hauríem de veure **"active (running)"** en verd.
+
+![Estat del servei Samba](image-73.png)
+
+---
+
+## Configuració del Client
+
+### 1. Instal·lació del Client Samba
+
+Al **client**, instal·lem les eines necessàries per connectar-nos a recursos compartits Samba:
+
+```bash
+apt install smbclient
+```
+
+![Instal·lació de smbclient](image-74.png)
+
+---
+
+### 2. Exploració de Recursos Compartits
+
+Podem llistar els recursos compartits disponibles al servidor:
+
+```bash
+smbclient -L //10.0.2.5 -N
+```
+
+**Opcions**:
+- `-L`: Llistar recursos compartits
+- `-N`: No demanar contrasenya (accés anònim)
+
+![Llistat de recursos compartits](image-75.png)
+
+---
+
+## Proves de Permisos
+
+Ara realitzarem diverses proves per verificar que els permisos configurats funcionin correctament segons la configuració establerta:
+
+- **Usuari anònim (guest)**: Pot llegir i escriure
+- **Usuari naim**: Pot llegir i escriure
+- **Usuari eros** (grup madrid): Només pot llegir
+- **Usuari edgar**: No té cap accés (invalid user)
+
+---
+
+### Prova 1: Accés Anònim (Guest)
+
+Connectem com a usuari anònim i intentem crear un directori:
+
+```bash
+smbclient //10.0.2.5/asixa -N
+```
+
+Dins de la consola de Samba, executem:
+
+```
+smb: \> mkdir anonim
+```
+
+![Connexió anònima i creació de directori](image-76.png)
+
+✅ **Resultat**: L'usuari anònim **pot crear carpetes** (té permisos d'escriptura segons `write list = guest`).
+
+---
+
+### Prova 2: Accés amb l'Usuari Edgar (Bloquejat)
+
+Intentem connectar amb l'usuari `edgar` des de la interfície gràfica:
+
+1. Obrim el gestor de fitxers
+2. Anem a **Other Locations**
+3. Introduïm: `smb://10.0.2.5/asixa`
+4. Seleccionem **Registered User** i introduïm `edgar`
+
+![Connexió amb usuari edgar](image-78.png)
+
+❌ **Resultat**: La connexió és **denegada** perquè `edgar` està a la llista `invalid users`.
+
+---
+
+### Prova 3: Accés amb l'Usuari Naim (Lectura i Escriptura)
+
+Connectem amb l'usuari `naim` utilitzant l'interfície gràfica de fitxers:
+
+1. Obrim el gestor de fitxers
+2. Anem a **Other Locations**
+3. A la barra inferior, introduïm: `smb://10.0.2.5/asixa`
+4. Seleccionem **Registered User** i introduïm les credencials de `naim`
+
+![Connexió amb usuari naim](image-80.png)
+
+Un cop connectats, provem de crear una carpeta:
+
+![Creació de carpeta amb naim](image-79.png)
+
+✅ **Resultat**: L'usuari `naim` **pot crear carpetes** (està a la `write list`).
+
+---
+
+### Prova 4: Accés amb l'Usuari Eros (Només Lectura)
+
+Connectem amb l'usuari `eros` (membre del grup `madrid`):
+
+![Connexió amb usuari eros](image-82.png)
+
+Intentem crear una carpeta:
+
+![Error en crear carpeta amb eros](image-81.png)
+
+❌ **Resultat**: L'usuari `eros` **NO pot crear carpetes**. Tot i estar al grup `madrid` que té permisos de lectura (`read list = @madrid`), NO està a la `write list`, per tant només pot **llegir**.
+
+---
+
+### Resum de Proves
+
+| Usuari | Accés | Lectura | Escriptura | Motiu |
+|--------|-------|---------|------------|-------|
+| **anonim (guest)** | ✅ Sí | ✅ Sí | ✅ Sí | A `read list` i `write list` |
+| **edgar** | ❌ No | ❌ No | ❌ No | A `invalid users` |
+| **naim** | ✅ Sí | ✅ Sí | ✅ Sí | A `read list` i `write list` |
+| **eros** | ✅ Sí | ✅ Sí | ❌ No | A `read list` (via @madrid) però NO a `write list` |
+
+---
+
+## Integració de Samba amb LDAP
+
+En aquesta secció integrarem el servidor Samba amb el directori LDAP que hem configurat prèviament. Això permet que els usuaris LDAP puguin accedir als recursos compartits Samba utilitzant les seves credencials del directori.
+
+### Avantatges de la Integració
+
+- **Gestió centralitzada**: Els usuaris es gestionen des d'un únic punt (LDAP)
+- **Sincronització automàtica**: No cal crear usuaris locals a cada servidor Samba
+- **Escalabilitat**: Facilita la gestió en entorns amb molts usuaris
+- **Seguretat**: Autenticació centralitzada i consistent
+
+---
+
+### 1. Instal·lació de Paquets Necessaris
+
+Al **servidor Samba**, primer corregim possibles errors als repositoris i després instal·lem els paquets per a la integració LDAP:
+
+> [!WARNING]
+> A **Ubuntu 22.04 (Jammy)**, el paquet `samba-ldap` no existeix. Utilitzarem els paquets estàndard LDAP que ja proporcionen la funcionalitat necessària.
+
+```bash
+# Si tens errors de repositoris, arregla'ls primer
+sed -i '/focall/d' /etc/apt/sources.list
+
+# Actualitza i instal·la els paquets correctes
+apt update
+apt install ldap-utils libnss-ldapd libpam-ldapd
+```
+
+Durant la instal·lació de `libnss-ldapd`, se't demanarà:
+
+#### 1.1. URI del servidor LDAP
+
+Introdueix la URI del servidor LDAP. Utilitza la IP del servidor per evitar problemes de resolució DNS:
+
+```
+ldap://10.0.2.3
+```
+
+![Configuració URI del servidor LDAP](image-83.png)
+
+#### 1.2. Base DN
+
+Introdueix el Distinguished Name base del teu domini:
+
+```
+dc=joan,dc=cat
+```
+
+![Configuració Base DN](image-84.png)
+
+#### 1.3. Serveis amb LDAP Lookups
+
+Se't demanarà quins serveis han de tenir habilitades les cerques LDAP. Selecciona **tots** els serveis necessaris utilitzant la barra espaiadora:
+
+- `[X] passwd` - Per poder cercar usuaris
+- `[X] group` - Per poder cercar grups
+- `[X] shadow` - Per poder gestionar contrasenyes
+- `[ ] hosts` - No necessari (opcional)
+- `[ ] networks` - No necessari (opcional)
+- `[ ] ethers` - No necessari (opcional)
+
+**Important**: Assegura't de marcar almenys **passwd**, **group** i **shadow**.
+
+![alt text](image-86.png)
+
+
+---
+
+### 2. Configuració de Samba amb LDAPSAM (Integració Automàtica)
+
+Per aconseguir que els usuaris LDAP puguin accedir a Samba **automàticament** sense haver de crear-los manualment amb `smbpasswd -a`, utilitzarem **ldapsam** com a backend de Samba.
+
+
+
+#### 2.1. Afegir Esquemes Samba a LDAP
+
+Samba necessita que els usuaris LDAP tinguin atributs específics (objectClass `sambaSamAccount`). Primer afegim l'esquema:
+
+```bash
+# Verificar si l'esquema Samba ja existeix
+ldapsearch -Y EXTERNAL -H ldapi:/// -b "cn=schema,cn=config" "(cn=*samba*)"
+```
+
+Si **no existeix**, l'hem d'afegir. L'esquema ve amb Samba:
+
+```bash
+# Localitzar l'esquema Samba
+ls /usr/share/doc/samba/examples/LDAP/
+```
+![alt text](image-94.png)
+
+
+# Afegir l'esquema a LDAP
+ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/samba.ldif
+
+![alt text](image-95.png)
+
+#### 2.2. Configurar smb.conf amb LDAPSAM
+
+Editem el fitxer de configuració de Samba:
+
+```bash
+nano /etc/samba/smb.conf
+```
+
+A la secció `[global]`, configurem LDAPSAM:
+
+```ini
+[global]
+   workgroup = WORKGROUP
+   security = user
+   
+   # Backend LDAPSAM - accés automàtic
+   passdb backend = ldapsam:ldap://localhost
+   ldap suffix = dc=joan,dc=cat
+   ldap user suffix = ou=users
+   ldap group suffix = ou=users
+   ldap admin dn = cn=admin,dc=joan,dc=cat
+   ldap ssl = off
+   ldap passwd sync = yes
+   ldap delete dn = no
+```
+![alt text](image-96.png)
+
+**Paràmetres clau:**
+- `passdb backend = ldapsam:ldap://localhost`: Usa LDAP per gestionar usuaris
+- `ldap suffix`: Base DN del directori
+- `ldap user suffix`: OU on es troben els usuaris
+- `ldap admin dn`: Compte admin que Samba usarà per accedir a LDAP
+- `ldap passwd sync = yes`: Sincronitza contrasenyes entre Samba i LDAP
+
+---
+
+### 3. Establir la Contrasenya de l'Administrador LDAP
+
+> [!IMPORTANT]
+> **Aquest pas ÉS NECESSARI** amb ldapsam. Samba necessita les credencials de l'administrador LDAP per poder crear i modificar usuaris automàticament.
+
+Establim la contrasenya que Samba usarà per connectar-se a LDAP:
+
+```bash
+smbpasswd -w 1234
+```
+![alt text](image-97.png)
+
+Substitueix `1234` per la contrasenya real del compte `cn=admin,dc=joan,dc=cat`.
+
+**Sortida esperada:**
+```
+Setting stored password for "cn=admin,dc=joan,dc=cat" in secrets.tdb
+```
+
+---
+
+### 4. Inicialitzar el Domini Samba a LDAP
+
+Ara hem d'inicialitzar l'estructura Samba dins de LDAP. Primer obtenim el SID del domini:
+
+```bash
+net getlocalsid
+```
+
+Aixo mostrarà algo com:
+```
+SID for domain SERVERJOAN is: S-1-5-21-1234567890-1234567890-1234567890
+```
+
+> [!NOTE]
+> El SID (Security Identifier) és un identificador únic del domini Samba.
+
+Crea les Organizational Units necessàries per a Samba:
+
+![alt text](image-98.png)
+
+Introdueix la contrasenya de l'admin LDAP quan se't demani.
+
+---
+
+### 5. Migrar Usuaris LDAP a Format Samba
+
+Els usuaris LDAP existents necessiten afegir-se'ls l'objectClass `sambaSamAccount` per poder autenticar-se amb Samba automàticament.
+
+#### 5.1. Comprovar usuaris LDAP existents
+
+Primer vejam quins usuaris tenim:
+
+```bash
+ldapsearch -x -b "dc=joan,dc=cat" "(objectClass=posixAccount)" uid cn uidNumber
+```
+
+![Llistat d'usuaris LDAP disponibles](image-91.png)
+
+#### 5.2. Afegir atributs Samba a un usuari
+
+Per a cada usuari, hem d'afegir els atributs Samba. Exemple amb l'usuari `javier`:
+
+```bash
+# Primer obtenim el SID base del domini
+SID=$(net getlocalsid | grep -oP 'S-1-5-21-\d+-\d+-\d+')
+
+# Creem un fitxer LDIF per afegir atributs Samba
+cat > /tmp/javier_samba.ldif << EOF
+dn: cn=Francisco Javier,ou=users,dc=joan,dc=cat
+changetype: modify
+add: objectClass
+objectClass: sambaSamAccount
+-
+add: sambaSID
+sambaSID: ${SID}-3002
+-
+add: sambaNTPassword
+sambaNTPassword: <hash_NT>
+EOF
+
+ldapmodify -x -D "cn=admin,dc=joan,dc=cat" -W -f /tmp/javier_samba.ldif
+```
+
+> [!WARNING]
+> **Alternativa Més Simple**: En lloc de modificar manualment cada usuari amb LDIF, podem usar `smbpasswd` que ho fa automàticament:
+
+```bash
+# Amb ldapsam configurat, smbpasswd afegeix automàticament sambaSamAccount
+smbpasswd -a javier
+```
+
+Aixo:
+1. Detecta que l'usuari existeix a LDAP (via NSS)
+2. Afegeix automàticament objectClass `sambaSamAccount`
+3. Estableix la contrasenya Samba
+
+Repeteix per a la resta d'usuaris:
+
+```bash
+smbpasswd -a joaquin
+smbpasswd -a jessica  
+smbpasswd -a joel
+smbpasswd -a mgarcia
+smbpasswd -a lsanchez
+```
+
+> [!CAUTION]
+> **⚠️ CAPTURA QUE FALTA**: Cal afegir una captura de pantalla mostrant l'execució de `smbpasswd -a` per almenys un usuari LDAP (per exemple `javier`), on es vegi:
+> - La comanda `smbpasswd -a javier`
+> - El missatge "New SMB password:" i "Retype new SMB password:"
+> - El missatge "Added user javier."
+
+---
+
+### 6. Verificació de NSSwitch per LDAP
+
+El fitxer `/etc/nsswitch.conf` ja hauria d'estar configurat automàticament per `libnss-ldapd` durant la instal·lació.
+
+Comprovem que estigui configurat correctament:
+
+```bash
+cat /etc/nsswitch.conf | grep -E "passwd|group|shadow"
+```
+
+Hauria de mostrar algo com:
+```
+passwd:         files ldap systemd
+group:          files ldap systemd
+shadow:         files ldap
+```
+
+![Configuració NSSwitch amb LDAP](image-89.png)
+
+---
+
+### 7. Reiniciar els Serveis
+
+Reiniciem Samba per aplicar la configuració:
+
+```bash
+systemctl restart smbd nmbd
+systemctl status smbd nmbd
+```
+
+![Samba active (running)](image-90.png)
+
+### 6. Verificació de la Integració
+
+#### 6.1. Comprovar usuaris LDAP existents
+
+Primer, llistem els usuaris que existeixen al directori LDAP:
+
+```bash
+ldapsearch -x -b "dc=joan,dc=cat" "(objectClass=posixAccount)" uid cn
+```
+
+![Llistat d'usuaris LDAP disponibles](image-91.png)
+
+En aquest exemple, tenim els següents usuaris LDAP:
+- `javier` (Francisco Javier)
+- `joaquin` (Joaquin)
+- `jessica` (Jessica)
+- `joel` (Joel Javier) 
+- `mgarcia` (Maria Garcia)
+- `lsanchez` (Laura Sanchez)
+
+#### 6.2. Verificar que NSS veu els usuaris LDAP
+
+Comprovem que el sistema Linux reconeix els usuaris LDAP mitjançant NSS:
+
+```bash
+getent passwd javier
+```
+
+Hauria de mostrar:
+```
+javier:x:2001:2001:Francisco Javier:/home/javier:/bin/bash
+```
+
+> [!CAUTION]
+> **⚠️ CAPTURA QUE FALTA**: Cal afegir una captura de pantalla executant `getent passwd javier` i mostrant el resultat amb les dades de l'usuari LDAP.
+
+
+#### 6.3. Afegir usuari LDAP a Samba
+
+Ara ve el pas clau: per permetre que un usuari LDAP accedeixi a recursos Samba, cal crear-li una **contrasenya Samba**:
+
+```bash
+smbpasswd -a javier
+```
+
+Introdueix una contrasenya quan se't demani:
+```
+New SMB password: ****
+Retype new SMB password: ****
+Added user javier.
+```
+
+> [!NOTE]
+> Aquesta contrasenya és **independent** de la contrasenya LDAP de l'usuari. És específica per accedir a recursos Samba.
+
+Repeteix aquest procés per a cada usuari LDAP que necessiti accés a Samba:
+
+```bash
+smbpasswd -a joaquin
+smbpasswd -a jessica
+smbpasswd -a joel
+smbpasswd -a mgarcia
+smbpasswd -a lsanchez
+```
+
+> [!CAUTION]
+> **⚠️ CAPTURA QUE FALTA**: Si aquesta secció és diferent de la secció 5.2, cal afegir captures. Altrament, elimina la duplicació.
+
+#### 6.4. Llistar usuaris de Samba
+
+Comprovem que els usuaris s'han afegit correctament a la base de dades de Samba:
+
+```bash
+pdbedit -L
+```
+
+Hauríes de veure els usuaris LDAP que has afegit, juntament amb els usuaris locals (edgar, naim, eros):
+```
+javier:2001:Francisco Javier
+joaquin:2002:Joaquin
+edgar:1001:
+naim:1002:
+eros:1003:
+```
+
+> [!CAUTION]
+> **⚠️ CAPTURA QUE FALTA**: Cal afegir una captura de pantalla executant `pdbedit -L` mostrant tots els usuaris (LDAP + locals) a la base de dades de Samba.
+
+#### 6.5. Crear un recurs compartit per a usuaris LDAP
+
+Ara crearem un recurs compartit específic per als usuaris LDAP que hem afegit a Samba.
+
+Editem `/etc/samba/smb.conf` i afegim al final del fitxer:
+
+```ini
+[ldap_share]
+path=/srv/samba/ldap_share
+comment = Recurs compartit per usuaris LDAP
+browseable = yes
+read only = no
+valid users = javier joaquin jessica joel mgarcia lsanchez
+create mask = 0660
+directory mask = 0770
+```
+
+> [!NOTE]
+> A `valid users` llistem els usuaris LDAP que volem que tinguin accés al recurs.
+
+> [!CAUTION]
+> **⚠️ CAPTURA QUE FALTA**: Cal afegir una captura de pantalla del fitxer `/etc/samba/smb.conf` obert amb `nano` mostrant la secció `[ldap_share]` que has afegit.
+
+Creem el directori:
+
+```bash
+mkdir -p /srv/samba/ldap_share
+chmod 770 /srv/samba/ldap_share
+chown nobody:nogroup /srv/samba/ldap_share
+```
+
+> [!CAUTION]
+> **⚠️ CAPTURA QUE FALTA**: Cal afegir una captura de pantalla executant aquestes comandes i verificant els permisos amb `ls -ld /srv/samba/ldap_share`.
+
+Reiniciem Samba:
+
+```bash
+systemctl restart smbd nmbd
+```
+
+---
+
+### 7. Proves de Connexió amb Usuaris LDAP
+
+#### 7.1. Des del Servidor - Verificació Local
+
+Primer comprovem des del mateix servidor que el recurs és accessible:
+
+```bash
+smbclient //localhost/ldap_share -U javier
+```
+
+Introdueix la contrasenya Samba que has configurat per a `javier`.
+
+> [!CAUTION]
+> **⚠️ CAPTURA QUE FALTA**: Cal afegir una captura de pantalla executant `smbclient //localhost/ldap_share -U javier`, mostrant:
+> - La connexió exitosa
+> - El prompt `smb: \>`
+> - Opcional: executar `ls` i veure el contingut del recurs
+
+
+#### 7.2. Des del Client - Terminal
+
+Connectem des d'un client utilitzant un usuari LDAP:
+
+```bash
+smbclient //10.0.2.5/ldap_share -U javier
+```
+
+Un cop connectat, pots provar:
+```
+smb: \> ls
+smb: \> mkdir prova_javier
+smb: \> exit
+```
+
+> [!CAUTION]
+> **⚠️ CAPTURA QUE FALTA**: Cal afegir una captura de pantalla des del **CLIENT** executant:
+> - `smbclient //10.0.2.5/ldap_share -U javier`
+> - Crear un directori amb `mkdir prova_javier`
+> - Llistar fitxers amb `ls` per verificar que s'ha creat
+
+
+#### 7.3. Des del Client - Interfície Gràfica
+
+1. Obrim el gestor de fitxers
+2. Anem a **Other Locations**
+3. Introduïm: `smb://10.0.2.5/ldap_share`
+4. Seleccionem **Registered User**
+5. **Username**: `javier`
+6. **Domain**: `WORKGROUP`
+7. **Password**: La contrasenya Samba que has configurat
+
+> [!CAUTION]
+> **⚠️ CAPTURES QUE FALTEN**: Cal afegir captures de pantalla des del **CLIENT** mostrant:
+> 1. **Formulari d'autenticació** amb l'usuari LDAP `javier`
+> 2. **Finestra del gestor de fitxers** amb el recurs `ldap_share` obert i mostrant els directoris creats
+> 3. **Creació d'una carpeta nova** dins del recurs per demostrar permisos d'escriptura
+
+
+---
+
+### 8. Resum de la Integració LDAP + Samba (LDAPSAM)
+
+Aquesta configuració utilitza **ldapsam** per a una integració més automàtica amb LDAP:
+
+```mermaid
+graph TD
+    A[Usuari LDAP] --> B{Té sambaSamAccount?}
+    B -->|Sí| C[Accés automàtic a Samba]
+    B -->|No| D[smbpasswd -a usuari una vegada]
+    D --> E[Afegeix sambaSamAccount a LDAP]
+    E --> C
+```
+
+**Components implicats:**
+
+1. **LDAP (slapd)**: Emmagatzema usuaris amb atributs Samba (`sambaSamAccount`)
+2. **Esquema Samba**: Permet objectClass `sambaSamAccount` a LDAP
+3. **NSS (libnss-ldapd)**: Permet que Linux vegi usuaris LDAP (`getent passwd`)
+4. **PAM (libpam-ldapd)**: Permet autenticació amb usuaris LDAP
+5. **Samba (ldapsam)**: Consulta LDAP automàticament per usuaris i contrasenyes
+
+**Flux de treball:**
+
+1. Els usuaris es creen a LDAP (només `posixAccount`)
+2. Es fa `smbpasswd -a usuari` **una vegada** per afegir `sambaSamAccount`
+3. A partir d'aquí, l'usuari pot accedir a Samba automàticament
+4. Les contrasenyes es sincronitzen entre LDAP i Samba (`ldap passwd sync = yes`)
+
+> [!TIP]
+> **Avantatges de ldapsam:**
+> - Usuaris LDAP accedeixen automàticament després de `smbpasswd -a`
+> - Contrasenyes emmagatzemades a LDAP (centralitzat)
+> - Sincronització automàtica de contrasenyes
+> - Gestió centralitzada en múltiples servidorsSamba
+
+> [!WARNING]
+> **Limitacions:**
+> - Cal afegir esquema Samba a LDAP
+> - `smbpasswd -a` necessari la primera vegada per cada usuari
+> - Més complex que tdbsam
+> - Errors de configuració poden causar "Can't access domain info"
+
+**Comparativa tdbsam vs ldapsam:**
+
+| Aspecte | tdbsam | ldapsam |
+|---------|---------|---------|
+| Emmagatzematge contrasenyes | Local (secrets.tdb) | LDAP centralitzat |
+| `smbpasswd -a` | Sempre manual | Només la primera vegada |
+| Sincronització | No | Sí (amb `ldap passwd sync`) |
+| Múltiples servidors Samba | No compartit | Compartit via LDAP |
+| Complexitat | Baixa | Alta |
+| Ús recomanat | Entorns petits, proves | Producció, múltiples servidors |
+
+---
+
+### 9. Solució de Problemes
+
+#### Problema: Samba no troba els usuaris LDAP
+
+**Solució**:
+1. Verifica que `nsswitch.conf` tingui `ldap` configurat
+2. Comprova la connexió LDAP: `ldapsearch -x -b "dc=joan,dc=cat"`
+3. Revisa els logs de Samba: `tail -f /var/log/samba/log.smbd`
+
+#### Problema: Error d'autenticació
+
+**Solució**:
+1. Verifica que la contrasenya LDAP estigui configurada: `smbpasswd -w contrasenya`
+2. Comprova els permisos del fitxer `secrets.tdb`:
+   ```bash
+   ls -l /var/lib/samba/secrets.tdb
+   ```
+
+#### Problema: Els grups LDAP no funcionen
+
+**Solució**:
+1. Assegura't que els grups LDAP tenen `objectClass: posixGroup`
+2. Verifica que `ldap group suffix` apunta a la OU correcta
+
+---
+
+### 10. Verificació Final
+
+Per comprovar que tot funciona correctament:
+
+1. **Llistar usuaris Samba**:
+   ```bash
+   pdbedit -L -v
+   ```
+
+2. **Comprovar recursos compartits**:
+   ```bash
+   smbclient -L localhost -U alu1
+   ```
+
+3. **Test de connexió completa**:
+   ```bash
+   smbclient //10.0.2.5/ldap_share -U alu1
+   smb: \> ls
+   smb: \> mkdir prova_ldap
+   smb: \> exit
+   ```
+
+4. **Verificar configuració de Samba amb testparm**:
+   ```bash
+   testparm
+   ```
+
+> [!CAUTION]
+> **⚠️ CAPTURA QUE FALTA**: Cal afegir una captura de pantalla executant `testparm` per verificar que no hi ha errors de sintaxi al fitxer `smb.conf`. Hauria de mostrar "Loaded services file OK" i un resum de la configuració.
+
+
+---
+
+## Resum de Comandes Samba
+
+| Comanda | Funció |
+|---------|--------|
+| `apt install samba` | Instal·lar el servidor Samba |
+| `nano /etc/samba/smb.conf` | Editar configuració de Samba |
+| `smbpasswd -a usuari` | Afegir usuari a la base de dades Samba |
+| `systemctl restart smbd nmbd` | Reiniciar serveis Samba |
+| `systemctl status smbd nmbd` | Comprovar estat dels serveis |
+| `smbclient -L //servidor` | Llistar recursos compartits |
+| `smbclient //servidor/recurs -U usuari` | Connectar a un recurs compartit |
+| `pdbedit -L` | Llistar usuaris de Samba |
+| `testparm` | Verificar sintaxi del fitxer `smb.conf` |
+
+---
+
+## Servidor NFS
+
+Teoria nfs: Permet transfeir carpetes i arxius a través d'una xarxa local. L'autenticacio es fa a nivell de host, no d'usuari. a diferència de samba. Poden accedir tant clients windows com linux. 
+
+
+## Exercici 1 (Sense LDAP)
+
+### AL SERVIDOR
+ 
+
+#### 1. Instal·lació del servidor NFS
+
+Instal·lem el paquet `nfs-kernel-server` que conté el servidor NFS per Linux:
+
+```bash
+sudo apt install nfs-kernel-server
+```
+
+Aquest paquet instal·la:
+- `nfs-kernel-server`: El servidor NFS principal
+- `nfs-common`: Utilitats comunes per NFS
+- `rpcbind`: Servei necessari per la comunicació RPC
+
+**La captura mostra**: La instal·lació exitosa amb 6 paquets nous.
+
+
+![Instal·lació NFS kernel server](image-99.png)
+
+#### 2. Creació del directori compartit
+
+Creem el directori que compartirem via NFS i configurem els permisos:
+
+```bash
+cd /
+mkdir 1exercici
+sudo su
+chmod 777 1exercici/
+chown nobody:nogroup 1exercici/
+ls -l | grep 1exercici
+```
+
+**Explicació**:
+- `chmod 777`: Dona permisos totals (lectura, escriptura, execució) per a tothom
+- `chown nobody:nogroup`: Assigna el propietari a `nobody` (usuari genèric per NFS)
+
+**La captura mostra**: La creació del directori i els permisos finals `drwxrwxrwx 2 nobody nogroup 4096 feb 10 12:51 1exercici`
+
+
+![Creació i configuració del directori /1exercici](image-100.png)
+
+
+#### 3. Configuració del fitxer /etc/exports
+
+El fitxer `/etc/exports` defineix quins directoris s'exporten via NFS i amb quines opcions.
+
+Editem el fitxer:
+
+```bash
+nano /etc/exports
+```
+
+Afegim la línia:
+
+```
+/1exercici *(rw,sync,no_subtree_check)
+```
+
+**Significat dels paràmetres**:
+- `/1exercici`: El directori que compartim
+- `*`: Permet l'accés des de qualsevol IP (pots especificar IPs concretes com `10.0.2.0/24`)
+- `rw`: Permisos de lectura i escriptura (read-write)
+- `sync`: Escriu els canvis immediatament al disc (més segur)
+- `no_subtree_check`: Millora el rendiment desactivant la verificació de subdirectoris
+
+**La captura mostra**: El fitxer `/etc/exports` obert amb nano amb la línia `/1exercici *(rw,sync,no_subtree_check)` afegida.
+
+
+![Configuració /etc/exports](image-101.png)
+
+> [!CAUTION]
+> **⚠️ CAPTURA QUE FALTA**: Cal afegir una captura de pantalla executant `exportfs -ra` per aplicar els canvis de `/etc/exports` i després `exportfs -v` per verificar les exportacions actives.
+
+
+Creem un fitxer de prova dins del directori exportat i apliquem les exportacions:
+
+```bash
+cd 1exercici/
+touch hola
+```
+
+Apliquem els canvis de les exportacions:
+
+```bash
+exportfs -ra
+```
+
+> **Nota**: `exportfs -ra` força la reexportació de tots els directoris sense reiniciar el servei.
+
+**La captura mostra**: La creació del fitxer `hola` dins de `/1exercici`.
+
+![Estat del servei o exportació](image-102.png)
+
+---
+
+
+
+---
+
+### AL CLIENT
+
+
+![alt text](image-103.png)
+
+#### 2. Muntatge del recurs NFS
+
+![Creació punt de muntatge](image-104.png)
+
+#### 1. Instal·lació del client NFS
+
+Al client, instal·lem els paquets necessaris per muntar recursos NFS:
+
+```bash
+apt install nfs-common rpcbind
+```
+
+Aquests paquets proporcionen:
+- `nfs-common`: Utilitats per muntar recursos NFS
+- `rpcbind`: Servei de mapatge de ports RPC
+
+**La captura mostra**: La instal·lació exitosa amb 5 paquets nous (keyutils, libevent-core, libnfsidmap1, nfs-common, rpcbind).
+
+
+![Muntatge del recurs](image-106.png)
+
+> [!CAUTION]
+> **⚠️ CAPTURA QUE FALTA**: Cal afegir una captura de pantalla executant `df -h | grep nfs` o `mount | grep nfs` per verificar que el muntatge està actiu.
+
+![Verificació del muntatge](image-105.png)
+
+---
+
+
+
+---
+
+### PROVES DE FUNCIONAMENT
+
+
+#### 2. Creació del punt de muntatge
+
+Creem un directori on muntarem el recurs NFS:
+
+```bash
+cd /
+mkdir prova
+cd prova/
+ls
+cd ..
+chmod 777 prova/
+chown nobody:nogroup prova/
+ls -l | grep prova
+```
+
+El resultat mostra: `drwxrwxrwx 2 nobody nogroup 4096 feb 10 13:08 prova`
+
+**La captura mostra**: La creació del directori `/prova` amb permisos 777 i propietari nobody:nogroup.
+
+![Proves de funcionament NFS](image-107.png)
+
+> [!CAUTION]
+> **⚠️ CAPTURES QUE FALTEN**: Cal afegir captures mostrant:
+> 1. **Crear un fitxer/directori** des del client dins del recurs muntat
+
+#### 3. Verificar connectivitat
+
+Abans de muntar el recurs, verifiquem que tenim connectivitat amb el servidor:
+
+```bash
+ping 10.0.2.5
+```
+
+El ping ha de ser exitós (0% packet loss).
+
+**La captura mostra**: Test de ping al servidor 10.0.2.5 amb 3 paquets transmesos i rebuts correctament (0% packet loss).
+
+> 2. **Verificar des del servidor** que el fitxer/directori s'ha creat
+> 3. **Comprovar propietaris i permisos** amb `ls -l` tant al client com al servidor
+
+---
+
+---
+
+### Client Windows amb NFS
+
+#### 4. Configurar muntatge permanent amb /etc/fstab
+
+Editarem `/etc/fstab` per fer que el recurs es munti automàticament a l'inici:
+
+```bash
+nano /etc/fstab
+```
+
+Afegim la línia:
+
+```
+10.0.2.5:/1exercici /prova nfs auto,nofail,noatime,nolock,bg,nfsvers=3,actimeo=0 0 0
+```
+
+**Paràmetres importants**:
+- `auto`: Munta automàticament a l'inici
+- `nofail`: No dona error si el servidor no està disponible
+- `nolock,bg`: Opcions per millorar la compatibilitat
+- `nfsvers=3`: Usa NFSv3
+
+**La captura mostra**: El fitxer `/etc/fstab` obert amb nano amb la línia del muntatge NFS afegida.
+
+
+A continuació documentarem com connectar un client **Windows 10/11** al servidor NFS Linux.
+
+#### Prerequisits
+
+- Windows 10 Pro/Enterprise o Windows 11 Pro/Enterprise  
+- Connexió de xarxa amb el servidor NFS Linux
+- Permisos d'administrador a Windows
+
+---
+
+#### 1. Habilitar "Services for NFS" a Windows
+
+Windows inclou un client NFS natiu, però ve desactivat per defecte.
+
+1. Obre el **Panell de Control** → **Programes** → **Activar o desactivar les característiques de Windows**
+2. Marca la casella **"Services for NFS"** o **"Client for NFS"**
+
+Un cop muntat el recurs (ja sigui amb `mount -a` o després de reiniciar), verifiquem que funciona:
+
+```bash
+ls /prova
+```
+
+Hauríem de veure el fitxer `hola` que vam crear al servidor!
+
+**La captura mostra**: Executem `ls /prova` i veiem el fitxer `hola`, confirmant que el muntatge NFS funciona correctament.
+
+3. Fes clic a **Acceptar** i **reinicia** el sistema
+
+**Alternativa PowerShell** (executar com a administrador):
+```powershell
+Enable-WindowsOptionalFeature -Online -FeatureName ServicesForNFS-ClientOnly -All
+```
+
+> [!CAUTION]
+> **⚠️ CAPTURES QUE FALTEN**:
+> 1. Finestra "Característiques de Windows" amb "Services for NFS" marcat
+> 2. Confirmació després del reinici que el servei està actiu
+
+---
+
+#### 2. Verificar el Servei NFS
+
+Després del reinici, verifica que el servei està actiu:
+
+**Opció GUI**: Prem `Win + R` → escriu `services.msc` → busca **"Client for NFS"** → comprova que està "En execució"
+
+**Opció PowerShell**:
+```powershell
+Get-Service -Name NfsClnt
+```
+
+> [!CAUTION]
+> **⚠️ CAPTURA QUE FALTA**: `services.msc` mostrant "Client for NFS" actiu
+
+---
+
+#### 3. Muntar el Recurs NFS
+
+**IP del servidor**: `10.0.2.X` (substitueix per la teva IP)  
+**Path exportat**: `/1exercici`
+
+##### Opció A: PowerShell (Recomanat)
+
+```powershell
+# Muntar el recurs
+mount -o anon \\10.0.2.X\1exercici Z:
+
+# Verificar
+net use
+```
+
+> [!NOTE]
+> A Windows, usa barres invertides `\\` en lloc de `/`
+
+> [!CAUTION]
+> **⚠️ CAPTURA QUE FALTA**: PowerShell executant `mount` i mostrant l'èxit
+
+##### Opció B: Explorador de Fitxers
+
+1. Obre l'Explorador → Clic dret a "Aquest equip"
+2. Selecciona "Connectar a una unitat de xarxa"
+3. **Unitat**: `Z:`
+4. **Carpeta**: `\\10.0.2.X\1exercici`
+5. Fes clic a "Finalitzar"
+
+> [!CAUTION]
+> **⚠️ CAPTURES QUE FALTEN**:
+> 1. Finestra "Connectar a una unitat de xarxa"
+> 2. Explorador mostrant unitat `Z:` muntada
+
+---
+
+#### 4. Verificar Accés
+
+**Explorador**: Obre la unitat `Z:` i comprova que veus els fitxers
+
+**PowerShell**:
+```powershell
+Get-ChildItem Z:\
+```
+
+> [!CAUTION]
+> **⚠️ CAPTURA QUE FALTA**: Explorador amb contingut del recurs NFS
+
+---
+
+#### 5. Provar Escriptura
+
+**Explorador**: Crea una carpeta `prova_windows` a `Z:`
+
+**PowerShell**:
+```powershell
+New-Item -Path "Z:\prova_windows" -ItemType Directory
+New-Item -Path "Z:\fitxer.txt" -ItemType File
+Set-Content -Path "Z:\fitxer.txt" -Value "Hola des de Windows!"
+```
+
+> [!CAUTION]
+> **⚠️ CAPTURES QUE FALTEN**:
+> 1. Creació de carpeta des de Windows
+> 2. Verificació al servidor Linux: `ls -la /1exercici`
+
+---
+
+#### 6. Verificar des del Servidor Linux
+
+```bash
+ls -la /1exercici
+ls -l /1exercici/prova_windows
+```
+
+> [!NOTE]
+> Els fitxers creats des de Windows tindran propietari `nobody:nogroup` o UID/GID numèric
+
+> [!CAUTION]
+> **⚠️ CAPTURA QUE FALTA**: Servidor Linux mostrant fitxers creats des de Windows
+
+---
+
+### Solució de Problemes Windows + NFS
+
+#### Error: "Network Error" o no es pot muntar
+
+**Solucions**:
+1. Verifica connectivitat: `ping 10.0.2.X`
+2. Comprova firewall (port 2049)
+3. Verifica exportació al servidor: `exportfs -v`
+
+#### Error: "Access Denied" en crear fitxers
+
+**al servidor Linux**:
+```bash
+chmod 777 /1exercici
+```
+
+**O modifica `/etc/exports`**:
+```
+/1exercici *(rw,sync,no_subtree_check,no_root_squash)
+```
+
+Després executa: `exportfs -ra`
+
+---
+
+
+## Exercici 2: Muntatge de Homes via NFS per a usuaris LDAP
+
+En aquest exercici configurarem el servidor NFS per allotjar els directoris personals (homes) dels usuaris LDAP, de manera que tinguin els seus fitxers accessibles des de qualsevol client.
+
+### 1. Preparació del Servidor
+
+Primer creem el directori principal on s'allotjaran tots els homes dels usuaris i ajustem els permisos i el propietari.
+
+![Preparació del directori homes](image-108.png)
+
+A continuació, creem manualment la carpeta per a l'usuari `marcel` dins del directori de homes i li donem permisos totals (777) provisionalment per a realitzar les proves.
+
+![Creació home usuari marcel](image-109.png)
+
+Editem el fitxer `/etc/exports` per compartir el directori `/homes` amb permís d'escriptura i lectura (`rw`) per a tota la xarxa.
+
+![Exportació del directori homes](image-110.png)
+
+Verifiquem que el directori `homes` existeix i té els permisos correctes.
+
+![Verificació permisos homes](image-111.png)
+
+---
+
+### 2. Configuració del Client
+
+Al client, editem el fitxer `/etc/fstab` per muntar automàticament el directori remot `10.0.2.5:/homes` al directori local `/homes` utilitzant el protocol NFS.
+
+![Configuració fstab client](image-112.png)
+
+> **Nota**: Recorda crear el punt de muntatge local (`mkdir /homes`) si no existeix abans de reiniciar o executar `mount -a`.
+
+### 3. Creació de l'Usuari LDAP
+
+Creem un fitxer LDIF (`usu.ldif`) per definir l'usuari `marcel`, assignant-li com a directori personal (`homeDirectory`) la ruta `/homes/marcel`, que correspon al recurs NFS compartit.
+
+![Fitxer LDIF usuari marcel](image-113.png)
+
+Finalment, afegim l'usuari al directori LDAP amb la comanda `ldapadd`.
+
+![Afegir usuari LDAP](image-114.png)
