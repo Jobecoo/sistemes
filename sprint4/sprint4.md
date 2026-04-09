@@ -60,6 +60,8 @@ sudo apt install mdadm
 
 CAPTURA 1: terminal amb la instal·lacio de `mdadm`.
 
+![Captura 1: instal·lacio de mdadm](image.png)
+
 Despres de la instal·lacio, el sistema ja disposa de l'eina necessaria per crear i administrar arrays RAID.
 
 ---
@@ -73,6 +75,8 @@ sudo fdisk -l
 ```
 
 CAPTURA 2: sortida de `fdisk -l` on es vegin `/dev/sdb` i `/dev/sdc`.
+
+![Captura 2: comprovacio dels discos disponibles](image-1.png)
 
 En aquesta comprovacio s'ha de veure que els dos discos tenen la mateixa mida i que estan preparats per ser particionats.
 
@@ -99,6 +103,8 @@ w
 
 CAPTURA 3: creacio de la particio a `/dev/sdb`.
 
+![Captura 3: particio creada a /dev/sdb](image-2.png)
+
 Amb aquest proces es crea `/dev/sdb1`, que ocupara tot el disc.
 
 ---
@@ -124,6 +130,8 @@ w
 
 CAPTURA 4: creacio de la particio a `/dev/sdc`.
 
+![Captura 4: particio creada a /dev/sdc](image-3.png)
+
 Aixi obtenim la particio `/dev/sdc1`.
 
 ---
@@ -138,6 +146,8 @@ sudo fdisk -l
 
 CAPTURA 5: sortida on es vegin `/dev/sdb1` i `/dev/sdc1`.
 
+![Captura 5: verificacio de les particions creades](image-4.png)
+
 Ara ja tenim els dos discos preparats per formar part del RAID 1.
 
 ---
@@ -147,11 +157,13 @@ Ara ja tenim els dos discos preparats per formar part del RAID 1.
 Creem el directori on muntarem el RAID:
 
 ```bash
-sudo mkdir -p /mnt/raid1
-sudo chmod 777 /mnt/raid1
+sudo mkdir -p /mnt/raid
+sudo chmod 777 /mnt/raid
 ```
 
-CAPTURA 6: creacio de `/mnt/raid1`.
+CAPTURA 6: creacio de `/mnt/raid`.
+
+![Captura 6: creacio del punt de muntatge](image-5.png)
 
 Aquest directori sera el punt de muntatge del dispositiu RAID.
 
@@ -167,6 +179,8 @@ sudo mdadm --create /dev/md0 --level=1 --raid-devices=2 /dev/sdb1 /dev/sdc1
 
 CAPTURA 7: comanda de creacio del RAID 1 amb `mdadm`.
 
+![Captura 7: creacio de l'array RAID 1](image-6.png)
+
 En aquest moment es crea `/dev/md0`, que sera el dispositiu RAID resultant. El sistema pot iniciar una sincronitzacio automatica entre els dos discos.
 
 ---
@@ -181,6 +195,8 @@ sudo mkfs.ext4 /dev/md0
 
 CAPTURA 8: formatacio de `/dev/md0` amb `mkfs.ext4`.
 
+![Captura 8: formatacio del RAID](image-7.png)
+
 Despres d'aquest pas, el RAID ja te sistema de fitxers i esta preparat per ser muntat.
 
 ---
@@ -194,6 +210,8 @@ sudo mdadm --detail /dev/md0
 ```
 
 CAPTURA 9: resultat de `mdadm --detail /dev/md0`.
+
+![Captura 9: detall del RAID](image-8.png)
 
 Aqui hauria d'apareixer que l'array esta en estat correcte i que els dos discos estan actius.
 
@@ -210,6 +228,8 @@ sudo sh -c "mdadm --detail --scan > /etc/mdadm/mdadm.conf"
 
 CAPTURA 10: sortida de `mdadm --detail --scan` i desament a `mdadm.conf`.
 
+![Captura 10: desament de la configuracio de mdadm](image-9.png)
+
 D'aquesta manera el sistema coneixera l'array RAID quan torni a arrencar.
 
 ---
@@ -223,6 +243,8 @@ sudo nano /etc/mdadm/mdadm.conf
 ```
 
 CAPTURA 11: contingut del fitxer `/etc/mdadm/mdadm.conf`.
+
+![Captura 11: contingut de mdadm.conf](image-10.png)
 
 En aquest fitxer ha d'apareixer la informacio de l'array `/dev/md0` amb el seu UUID.
 
@@ -239,10 +261,12 @@ sudo nano /etc/fstab
 I hi afegim aquesta linia:
 
 ```text
-/dev/md0   /mnt/raid1   ext4   defaults   0   0
+/dev/md0   /mnt/raid   ext4   defaults   0   0
 ```
 
 CAPTURA 12: fitxer `/etc/fstab` amb la nova linia afegida.
+
+![Captura 12: entrada del RAID a fstab](image-19.png)
 
 Aquesta configuracio fa que el RAID es munti automaticament cada vegada que s'inicia el sistema.
 
@@ -259,7 +283,9 @@ sudo update-initramfs -u -k all
 
 CAPTURA 13: execucio de `mount -a` i `update-initramfs -u -k all`.
 
-Amb aixo ens assegurem que el sistema reconeixera correctament el RAID durant l'arrencada.
+![Captura 13: aplicacio dels canvis i actualitzacio d'initramfs](image-12.png)
+
+Amb aixo ens assegurem que el sistema reconeixera correctament el RAID durant l'arrencada. En la captura es veu una primera prova amb el punt de muntatge anterior; despres es corregeix a `/mnt/raid`.
 
 ---
 
@@ -273,6 +299,8 @@ sudo mdadm --detail /dev/md0
 
 CAPTURA 14: comprovacio del RAID despres del reinici.
 
+![Captura 14: estat del RAID despres del reinici](image-13.png)
+
 Si tot esta ben configurat, el RAID hauria de continuar actiu i en estat correcte.
 
 ---
@@ -282,13 +310,15 @@ Si tot esta ben configurat, el RAID hauria de continuar actiu i en estat correct
 Per comprovar que el RAID funciona de veritat, hi creem fitxers i directoris:
 
 ```bash
-cd /mnt/raid1
+cd /mnt/raid
 touch prova1
 mkdir carpeta_prova
 ls -la
 ```
 
-CAPTURA 15: creacio de fitxers dins de `/mnt/raid1`.
+CAPTURA 15: creacio de fitxers dins de `/mnt/raid`.
+
+![Captura 15: creacio de fitxers de prova](image-16.png)
 
 Amb aquesta prova confirmem que el sistema de fitxers permet llegir i escriure dades sense problemes.
 
@@ -306,6 +336,8 @@ sudo mdadm --detail /dev/md0
 
 CAPTURA 16: estat del RAID en mode degradat.
 
+![Captura 16: RAID en estat degradat](image-15.png)
+
 En aquest moment l'array continua funcionant, pero amb un sol disc actiu. Aquesta es precisament la utilitat del RAID 1.
 
 ---
@@ -315,12 +347,14 @@ En aquest moment l'array continua funcionant, pero amb un sol disc actiu. Aquest
 Tot i tenir l'array degradat, les dades continuen accessibles:
 
 ```bash
-ls -la /mnt/raid1
-touch /mnt/raid1/prova2
-ls -la /mnt/raid1
+ls -la /mnt/raid
+touch /mnt/raid/prova2
+ls -la /mnt/raid
 ```
 
 CAPTURA 17: comprovacio que les dades continuen accessibles en estat degradat.
+
+![Captura 17: dades accessibles amb l'array degradat](image-18.png)
 
 Aquesta prova demostra que el sistema pot continuar treballant encara que un dels discos hagi fallat.
 
@@ -336,6 +370,8 @@ sudo mdadm --detail /dev/md0
 ```
 
 CAPTURA 18: reconstruccio del RAID i resincronitzacio.
+
+![Captura 18: reconstruccio del RAID](image-20.png)
 
 Quan el disc es reincorpora, `mdadm` inicia la resincronitzacio automatica. Un cop acabada, el RAID torna a estar completament operatiu.
 
