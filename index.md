@@ -21,6 +21,7 @@ El contenido está bajo licencia [Creative Commons BY-NC-SA 4.0 ES](LICENSE.md).
 ### [Sprint 4: Configuracio del programari de base i sistemes d'emmagatzematge a Ubuntu](sprint4/sprint4.md)  
 ### [Sprint 5: Documentació del Sprint 5](sprint5/sprint5.md)
 ### [Windows Sprint 1: Instal·lació i configuració a Windows](windows-sprint1/sprint1-windows.md)
+### [Windows Sprint 2: Gestió de discs, usuaris, scripts i permisos](windows-sprint2/sprint2-windows.md)
 
 
 ### [Relación entre Unidades y Resultados de Aprendizaje (RAs)](ras.md)  
