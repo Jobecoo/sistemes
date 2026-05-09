@@ -2,9 +2,9 @@
 
 ## Introducció
 
-En aquest sprint treballarem la gestió de discs a Windows, la configuració de quotes, la creació d'usuaris i grups, l'automatització amb scripts d'inici de sessió, la gestió de processos i els permisos ACL sobre carpetes i fitxers.
+En aquest sprint he treballat la gestió de discs a Windows Server, la configuració de quotes de disc, la creació d'usuaris i grups locals, l'automatització de tasques amb scripts d'inici de sessió, la gestió de processos des de la línia de comandes i la configuració de permisos ACL sobre carpetes.
 
-La idea d'aquest document és que puguis seguir-lo pas a pas. A cada apartat hi tens també indicada la captura de pantalla que has de fer. Després només hauràs d'esborrar el text de la captura i enganxar-hi la imatge corresponent.
+L'objectiu era posar en pràctica tots aquests conceptes dins d'un entorn virtualitzat amb VirtualBox, simulant un escenari d'administració real.
 
 ---
 
@@ -12,47 +12,47 @@ La idea d'aquest document és que puguis seguir-lo pas a pas. A cada apartat hi 
 
 ### Pas 1: Afegir un nou disc virtual a la màquina virtual
 
-Obre la configuració de la màquina virtual a VirtualBox i ves a l'apartat d'emmagatzematge. Afegeix un nou disc dur virtual de `5 GB`, en format `VDI` i de mida dinàmica.
+El primer que he fet ha estat afegir un segon disc dur virtual a la màquina de Windows des de la configuració de VirtualBox. He anat a l'apartat d'emmagatzematge i he creat un disc VDI de `5 GB` amb mida dinàmica.
 
-Aquest disc serà el que després utilitzarem per crear dues particions diferents dins de Windows.
+L'objectiu d'aquest disc és poder crear-hi dues particions amb sistemes de fitxers diferents per veure les diferències entre NTFS i FAT32.
+
+![alt text](image-9.png)
 
 ---
 
 ### Pas 2: Obrir la gestió de discs de Windows
 
-Inicia la màquina virtual de Windows i obre la gestió de discs. Ho pots fer executant:
+Un cop arrencada la màquina virtual, he obert la gestió de discs executant `diskmgmt.msc`. Es pot veure que apareix un disc nou sense inicialitzar, amb tot l'espai com a no assignat.
 
 ```text
 diskmgmt.msc
 ```
 
-Comprova que apareix un disc nou sense inicialitzar i amb espai no assignat.
+![alt text](image-10.png)
 
 ---
 
 ### Pas 3: Inicialitzar el disc i crear la partició Dades
 
-Inicialitza el disc nou i crea-hi una primera partició de `5000 MB`. Assigna-li la lletra `E:`.
-Formata aquesta partició en `NTFS`, ja que aquest sistema de fitxers permet treballar amb quotes i ACL.
+He inicialitzat el disc i he creat una primera partició de `500 MB` amb la lletra `E:`. L'he formatada en NTFS perquè és el sistema de fitxers que suporta quotes de disc i permisos ACL avançats, que necessitaré més endavant.
+
+![alt text](image-11.png)
+
 ---
 
 ### Pas 4: Crear la partició Portable
 
-Amb l'espai restant del disc, crea una segona partició. Assigna-li la lletra `F:` i posa-li l'etiqueta:
+Amb l'espai restant del disc he creat una segona partició amb la lletra `F:` i l'etiqueta `Portable`, formatada en FAT32.
 
-```text
-Portable
-```
+He triat FAT32 perquè és un sistema de fitxers molt compatible amb altres dispositius (pendrives, càmeres, etc.), però cal tenir en compte que no suporta quotes ni permisos ACL avançats. Per a funcionalitats d'administració avançada, NTFS és necessari.
 
-En aquest cas, el sistema de fitxers ha de ser `FAT32`.
-
-Pots comentar al document que FAT32 és molt compatible amb altres dispositius, però no suporta quotes ni permisos ACL avançats, a diferència d'NTFS.
+![alt text](image-12.png)
 
 ---
 
 ### Pas 5: Verificar la configuració amb diskpart
 
-Obre una consola `CMD` com a administrador i executa aquestes comandes:
+Per comprovar que tot s'ha configurat correctament, he obert una consola CMD com a administrador i he utilitzat `diskpart`:
 
 ```cmd
 diskpart
@@ -62,7 +62,9 @@ list part
 list vol
 ```
 
-Amb això podràs comprovar que el disc nou té les dues particions creades correctament.
+A la sortida es pot veure que el disc 1 té les dues particions creades: la de 500 MB (E: Dades, NTFS) i la resta (F: Portable, FAT32).
+
+![alt text](image-13.png)
 
 ---
 
@@ -70,71 +72,66 @@ Amb això podràs comprovar que el disc nou té les dues particions creades corr
 
 ### Pas 6: Activar quotes a la partició Dades
 
-Obre l'Explorador de fitxers, fes clic dret sobre la unitat `E:` i entra a `Propietats`. Des de la pestanya de quota, activa la gestió de quotes.
+He obert l'Explorador de fitxers, he fet clic dret sobre la unitat `E:` i he entrat a Propietats. A la pestanya de quota he activat la gestió de quotes.
 
-Les quotes només funcionen sobre particions `NTFS`, per això la partició Dades s'ha creat amb aquest format.
+Les quotes només funcionen en particions NTFS, que és el motiu pel qual he formatat la partició Dades amb aquest sistema de fitxers.
+
+![alt text](image-14.png)
+
 ---
 
-### Pas 7: Configurar el límit de 300 MB
+### Pas 7: Configurar el límit de quota
 
-Dins la configuració de quotes, activa les opcions necessàries i configura:
+Dins la configuració de quotes he establert els paràmetres següents:
 
-- límit de disc de `350 MB`;
-- nivell d'advertència;
-- registre d'esdeveniments quan se supera el límit o l'avís.
+- Límit de disc: `350 MB`
+- Nivell d'advertència configurat
+- Registre d'esdeveniments quan se supera el límit o l'avís
 
-L'objectiu és que cada usuari no pugui superar els `300 MB` d'espai ocupat a la unitat `E:`.
+D'aquesta manera, cada usuari tindrà un espai màxim limitat a la unitat `E:`.
+
+![alt text](image-15.png)
+
 ---
 
 ### Pas 8: Crear els usuaris locals alumne1 i alumne2
 
-Executa:
+He obert la consola d'administració d'usuaris i grups locals amb `lusrmgr.msc` i he creat dos usuaris nous: `alumne1` i `alumne2`.
 
 ```text
 lusrmgr.msc
 ```
 
-Des d'aquesta consola, crea dos usuaris locals nous:
+He activat l'opció perquè la contrasenya no caduqui, per evitar problemes durant les proves.
 
-- `alumne1`
-- `alumne2`
+![alt text](image-16.png)
 
-Si vols evitar problemes durant les proves, pots activar l'opció perquè la contrasenya no caduqui.
+![alt text](image-17.png)
+
+![alt text](image-18.png)
 
 ---
 
 ### Pas 9: Crear el grup Limitats i afegir-hi els usuaris
 
-Dins de la mateixa consola, crea un grup nou amb el nom:
+Des de la mateixa consola, he creat un grup nou anomenat `Limitats` i hi he afegit els usuaris `alumne1` i `alumne2` com a membres.
 
-```text
-Limitats
-```
-
-Afegeix-hi com a membres els usuaris `alumne1` i `alumne2`.
-
-> 📸 **Captura**: Fes una captura de la finestra del grup `Limitats` on es vegin els dos usuaris afegits.
+![alt text](image-19.png)
 
 ---
 
 ### Pas 10: Provar que les quotes funcionen
 
-Inicia sessió com a `alumne1` i obre una consola. Després intenta crear fitxers grans a `E:\` amb `fsutil`.
-
-Per exemple:
+He iniciat sessió com a `alumne1` i he intentat crear fitxers grans a `E:\` amb la comanda `fsutil`:
 
 ```cmd
-fsutil file createnew E:\prova.dat 350000000
-fsutil file createnew E:\prova.dat 150000000
-fsutil file createnew E:\prova2.dat 50000000
-fsutil file createnew E:\prova3.dat 50000000
-fsutil file createnew E:\prova4.dat 50000000
-fsutil file createnew E:\prova5.dat 50000000
+fsutil file createnew E:\prova.dat 3500000
+fsutil file createnew E:\prova5.dat 150000000
 ```
 
-Has de veure que, quan l'usuari supera el límit, Windows retorna un error d'espai insuficient.
+El primer fitxer s'ha creat sense problemes, però en intentar crear el segon (que supera el límit de quota), Windows ha retornat un error d'espai insuficient. Això confirma que les quotes estan funcionant correctament.
 
-> 📸 **Captura**: Fes una captura de la consola on es vegin fitxers creats correctament i també l'error quan se supera la quota.
+![alt text](image-20.png)
 
 ---
 
@@ -142,96 +139,72 @@ Has de veure que, quan l'usuari supera el límit, Windows retorna un error d'esp
 
 ### Pas 11: Afegir un tercer disc virtual per a còpies
 
-Torna a VirtualBox i afegeix un tercer disc virtual de `5 GB`. Aquest disc servirà per guardar-hi còpies de seguretat.
+He tornat a la configuració de VirtualBox i he afegit un tercer disc virtual de `5 GB`. Aquest disc servirà exclusivament per guardar còpies de seguretat dels perfils d'usuari.
 
-> 📸 **Captura**: Fes una captura de la configuració de VirtualBox on es vegi el tercer disc virtual afegit.
+![alt text](image-21.png)
 
 ---
 
 ### Pas 12: Formatar el tercer disc com a Backups
 
-Un cop dins de Windows, obre de nou la gestió de discs i localitza el nou disc. Crea-hi un volum simple, assigna-li la lletra `B:` i posa-li l'etiqueta:
+Dins de Windows, he obert la gestió de discs i he creat un volum simple al nou disc. Li he assignat la lletra `B:`, l'etiqueta `Backups` i l'he formatat en NTFS.
 
-```text
-Backups
-```
-
-Aquest volum s'ha de formatar en `NTFS`.
-
-> 📸 **Captura**: Fes una captura de `Gestió de discs` on es vegi la unitat `B:` creada amb el nom `Backups`.
+![alt text](image-22.png)
 
 ---
 
 ### Pas 13: Crear la carpeta CòpiesUsuaris
 
-Dins de la unitat `B:`, crea manualment una carpeta amb aquest nom:
+He creat la carpeta `CòpiesUsuaris` dins de la unitat `B:`. Aquesta carpeta serà la destinació on l'script guardarà les còpies dels perfils.
 
-```text
-CòpiesUsuaris
-```
-
-Allà és on l'script anirà guardant la còpia del perfil de cada usuari.
-
-> 📸 **Captura**: Fes una captura de l'Explorador de fitxers on es vegi la carpeta `B:\CòpiesUsuaris`.
+![alt text](image-23.png)
 
 ---
 
 ### Pas 14: Crear l'script de còpia
 
-Crea un fitxer `script.bat` amb aquest contingut:
+He creat un fitxer `script.bat` amb el contingut següent:
 
 ```bat
 @echo off
 xcopy C:\Users\%USERNAME% B:\CòpiesUsuaris\%USERNAME% /E /I /Y
 ```
 
-Aquest script copia tot el perfil de l'usuari que ha iniciat sessió cap a la carpeta de còpies del disc `B:`.
+Aquest script copia tot el perfil de l'usuari que ha iniciat sessió cap a la carpeta de còpies del disc `B:`. La variable `%USERNAME%` fa que cada usuari tingui la seva pròpia subcarpeta.
 
-> 📸 **Captura**: Fes una captura del fitxer `script.bat` o del bloc de notes on es vegi clarament el contingut de l'script.
+![alt text](image-24.png)
 
 ---
 
 ### Pas 15: Obrir l'editor de directives de grup
 
-Executa:
-
-```text
-gpedit.msc
-```
-
-Després navega fins a:
+He executat `gpedit.msc` i he navegat fins a:
 
 ```text
 Configuració d'usuari > Configuració de Windows > Scripts (inici o tancament de sessió)
 ```
 
-Obre l'opció d'inici de sessió.
+Des d'aquí es pot configurar quins scripts s'executen automàticament quan un usuari inicia sessió.
 
-> 📸 **Captura**: Fes una captura de `gpedit.msc` on es vegi la ruta fins a l'apartat d'Scripts d'inici de sessió.
+![alt text](image-25.png)
 
 ---
 
 ### Pas 16: Assignar l'script a l'inici de sessió
 
-Afegeix l'script `script.bat` a la configuració d'inici de sessió perquè s'executi automàticament cada vegada que un usuari entri al sistema.
+He afegit el fitxer `script.bat` a la configuració d'inici de sessió. D'aquesta manera, cada vegada que un usuari entri al sistema, es farà automàticament una còpia del seu perfil.
 
-Pots indicar també que aquesta configuració local afecta els usuaris del sistema segons la política aplicada.
+Aquesta configuració és local i afecta tots els usuaris del sistema segons la política aplicada.
 
-> 📸 **Captura**: Fes una captura de la finestra on es vegi l'script afegit a la llista de scripts d'inici de sessió.
+![alt text](image-26.png)
 
 ---
 
 ### Pas 17: Verificar que la còpia es fa correctament
 
-Inicia sessió com a `alumne1` i comprova que s'ha creat la carpeta:
+He iniciat sessió com a `alumne1` i he comprovat que s'ha creat la carpeta `B:\CòpiesUsuaris\alumne1` amb les carpetes habituals del perfil d'usuari (Desktop, Documents, Downloads, etc.).
 
-```text
-B:\CòpiesUsuaris\alumne1
-```
-
-Dins hi haurien d'aparèixer les carpetes habituals del perfil d'usuari, com ara `Desktop`, `Documents`, `Downloads` i altres.
-
-> 📸 **Captura**: Fes una captura de l'Explorador de fitxers on es vegi la carpeta de còpia de `alumne1` dins de `B:\CòpiesUsuaris`.
+![alt text](image-27.png)
 
 ---
 
@@ -239,35 +212,33 @@ Dins hi haurien d'aparèixer les carpetes habituals del perfil d'usuari, com ara
 
 ### Pas 18: Llistar els processos actius
 
-Obre `CMD` i executa:
+He obert CMD i he executat `tasklist` per veure tots els processos en execució. Aquesta comanda mostra el nom del procés, el PID, la sessió i l'ús de memòria.
 
 ```cmd
 tasklist
 ```
 
-Aquesta comanda mostra tots els processos en execució, amb el seu nom, PID, sessió i ús de memòria.
-
-> 📸 **Captura**: Fes una captura de la consola amb la sortida de `tasklist`.
+![alt text](image-28.png)
 
 ---
 
 ### Pas 19: Guardar la llista de processos en un fitxer
 
-Redirigeix la sortida a un fitxer de text amb aquesta comanda:
+He redirigit la sortida de `tasklist` a un fitxer de text per poder-la analitzar després:
 
 ```cmd
 tasklist > C:\Users\%USERNAME%\processos_inici.txt
 ```
 
-Després pots fer un `dir` per comprovar que el fitxer existeix.
+Amb un `dir` he comprovat que el fitxer s'ha creat correctament.
 
-> 📸 **Captura**: Fes una captura de la consola on es vegi la creació del fitxer `processos_inici.txt`.
+![alt text](image-29.png)
 
 ---
 
 ### Pas 20: Analitzar alguns processos importants
 
-Filtra el fitxer per buscar processos concrets:
+He filtrat el fitxer per buscar processos concrets amb `findstr`:
 
 ```cmd
 findstr explorer.exe C:\Users\%USERNAME%\processos_inici.txt
@@ -275,51 +246,53 @@ findstr SearchIndexer.exe C:\Users\%USERNAME%\processos_inici.txt
 findstr OneDrive.exe C:\Users\%USERNAME%\processos_inici.txt
 ```
 
-Després explica breument què fa cada procés:
+Cadascun d'aquests processos té una funció específica:
 
-- `explorer.exe`: gestiona l'escriptori i l'explorador de fitxers;
-- `SearchIndexer.exe`: s'encarrega de la indexació per a les cerques;
-- `OneDrive.exe`: sincronitza fitxers amb el núvol.
+- **explorer.exe**: gestiona l'escriptori, la barra de tasques i l'explorador de fitxers.
+- **SearchIndexer.exe**: s'encarrega de la indexació de fitxers per agilitzar les cerques del sistema.
+- **OneDrive.exe**: sincronitza fitxers amb el núvol de Microsoft.
 
-> 📸 **Captura**: Fes una captura de la consola on es vegin els resultats de `findstr` sobre aquests processos.
+![alt text](image-30.png)
 
 ---
 
 ### Pas 21: Identificar processos prescindibles
 
-Pots buscar processos que no siguin essencials en una màquina virtual de laboratori, per exemple:
+He buscat processos que no són essencials en una màquina virtual de laboratori:
 
 ```cmd
 tasklist | findstr "OneDrive.exe Teams.exe SkypeApp.exe"
 ```
 
-Aquí pots comentar que eliminar processos com `OneDrive` o `Teams` pot ajudar a alliberar memòria RAM i millorar el rendiment.
+En un entorn de pràctiques, processos com `OneDrive` o `Teams` consumeixen memòria RAM innecessàriament. Eliminar-los pot millorar el rendiment de la màquina virtual.
 
-> 📸 **Captura**: Fes una captura on es vegin els processos prescindibles detectats a la consola.
+![alt text](image-31.png)
 
 ---
 
 ### Pas 22: Tancar un procés manualment
 
-Prova a tancar `OneDrive.exe` amb:
+He tancat el procés `OneDrive.exe` amb la comanda `taskkill`:
 
 ```cmd
 taskkill /IM OneDrive.exe /F
 ```
 
-Després comprova si encara queda alguna instància oberta amb:
+Després he comprovat que ja no hi ha cap instància en execució:
 
 ```cmd
 tasklist | findstr OneDrive.exe
 ```
 
-> 📸 **Captura**: Fes una captura de la consola on es vegi el resultat de `taskkill` i la comprovació posterior.
+Com que no surt cap resultat, el procés s'ha tancat correctament.
+
+![alt text](image-32.png)
 
 ---
 
 ### Pas 23: Automatitzar l'eliminació de processos a l'inici de sessió
 
-Modifica l'script `script.bat` i deixa'l així:
+He modificat l'script `script.bat` per afegir-hi les línies de `taskkill`:
 
 ```bat
 @echo off
@@ -328,37 +301,37 @@ taskkill /IM OneDrive.exe /F
 taskkill /IM Teams.exe /F
 ```
 
-D'aquesta manera, cada cop que un usuari iniciï sessió es farà la còpia del seu perfil i també s'intentaran tancar aquests processos.
+Ara, cada cop que un usuari inicia sessió, es fa la còpia del perfil i es tanquen automàticament els processos innecessaris.
 
-> 📸 **Captura**: Fes una captura del contingut actualitzat de `script.bat`.
+![alt text](image-33.png)
 
 ---
 
 ### Pas 24: Verificar l'automatització amb un altre usuari
 
-Inicia sessió com a `alumne2` i comprova si `OneDrive.exe` continua actiu:
+He iniciat sessió com a `alumne2` i he comprovat si `OneDrive.exe` seguia actiu:
 
 ```cmd
 tasklist | findstr OneDrive.exe
 ```
 
-Si no surt cap resultat, significa que l'script ha funcionat correctament.
+No ha sortit cap resultat, la qual cosa confirma que l'script ha funcionat correctament i ha tancat el procés automàticament.
 
-> 📸 **Captura**: Fes una captura de la consola on no aparegui cap resultat per a `OneDrive.exe`.
+![alt text](image-34.png)
 
 ---
 
-### Pas 25: Explicar què passa si mates explorer.exe
+### Pas 25: Explicar què passa si es tanca explorer.exe
 
-En aquest apartat pots escriure una petita explicació teòrica. Si es tanca `explorer.exe`, desapareixen l'escriptori, la barra de tasques i les finestres de l'explorador, però el sistema no queda bloquejat del tot.
+Si es tanca el procés `explorer.exe`, desapareixen l'escriptori, la barra de tasques i totes les finestres de l'explorador de fitxers. Tot i això, el sistema no queda completament bloquejat: les aplicacions que ja estaven obertes continuen funcionant.
 
-També pots indicar que es pot recuperar obrint l'Administrador de tasques i executant de nou:
+Per recuperar l'escriptori, es pot obrir l'Administrador de tasques (Ctrl+Shift+Esc) i executar de nou:
 
 ```cmd
 explorer.exe
 ```
 
-> 📸 **Captura**: Si fas la prova, fes una captura controlada de l'escriptori sense `explorer.exe`. Si no la fas, pots no posar captura en aquest punt i deixar només l'explicació.
+Això torna a carregar tota la interfície gràfica amb normalitat.
 
 ---
 
@@ -366,97 +339,79 @@ explorer.exe
 
 ### Pas 26: Crear la carpeta Projectes
 
-Com a administrador, crea la carpeta:
+Com a administrador, he creat la carpeta `E:\Projectes`. Aquesta carpeta servirà per practicar la configuració de permisos ACL amb diferents nivells d'accés per a cada usuari.
 
-```text
-E:\Projectes
-```
-
-La farem servir per provar permisos diferents entre usuaris.
-
-> 📸 **Captura**: Fes una captura de l'Explorador de fitxers on es vegi la carpeta `E:\Projectes`.
+![alt text](image-35.png)
 
 ---
 
 ### Pas 27: Configurar els permisos per al grup Limitats
 
-Entra a:
+He entrat a les propietats de seguretat de la carpeta `E:\Projectes` (Propietats > Seguretat > Opcions avançades). He desactivat l'herència de permisos i he configurat el grup `Limitats` perquè tingui control sobre la carpeta.
 
-```text
-E:\Projectes > Propietats > Seguretat > Opcions avançades
-```
+D'aquesta manera, `alumne1` i `alumne2`, pel fet de pertànyer al grup `Limitats`, poden accedir i treballar amb la carpeta.
 
-Desactiva l'herència si cal i ajusta els permisos perquè el grup `Limitats` tingui control sobre la carpeta. També pots eliminar algunes entrades heretades que no necessitis per deixar la configuració més clara.
-
-L'objectiu és que `alumne1` i `alumne2`, pel fet de pertànyer al grup `Limitats`, puguin accedir a la carpeta.
-
-> 📸 **Captura**: Fes una captura de la configuració avançada de seguretat on es vegi el grup `Limitats` amb permisos sobre `E:\Projectes`.
+![alt text](image-36.png)
 
 ---
 
 ### Pas 28: Comprovar que alumne1 pot escriure
 
-Inicia sessió com a `alumne1` i crea un fitxer de prova dins de `E:\Projectes`, per exemple:
+He iniciat sessió com a `alumne1` i he creat un fitxer `hey.txt` dins de `E:\Projectes` amb el contingut "hola". El fitxer s'ha creat i desat sense cap problema, confirmant que els permisos del grup `Limitats` funcionen correctament.
 
-```text
-hey.txt
-```
-
-Escriu-hi algun contingut curt, com ara `hola`, i desa'l.
-
-> 📸 **Captura**: Fes una captura on es vegi que `alumne1` ha pogut crear i desar el fitxer dins de `E:\Projectes`.
+![alt text](image-38.png)
 
 ---
 
-### Pas 29: Aplicar una excepció de només lectura per a alumne2
+### Pas 29: Denegar l'escriptura a alumne2
 
-Torna a entrar com a administrador i executa:
+He tornat a entrar com a administrador i he executat la comanda següent per denegar explícitament l'escriptura a `alumne2`:
 
 ```cmd
-icacls "E:\Projectes" /grant:r alumne2:(R)
+icacls "E:\Projectes" /deny alumne2:(W)
 ```
 
-Aquesta comanda dona a `alumne2` un permís explícit de només lectura sobre la carpeta.
+He fet servir `/deny` en lloc de `/grant:r` perquè a les ACL de Windows els permisos "Allow" són acumulatius: si donés només lectura amb `/grant:r`, `alumne2` seguiria podent escriure gràcies als permisos heretats del grup `Limitats`. En canvi, les entrades **Deny sempre tenen prioritat sobre les Allow**, independentment de si vénen d'un grup o de l'usuari. Per tant, `/deny alumne2:(W)` és la manera correcta de bloquejar l'escriptura.
 
-És interessant comentar que les entrades explícites d'un usuari poden tenir prioritat sobre els permisos heretats per grup, segons com estigui configurada l'ACL.
-
-> 📸 **Captura**: Fes una captura de la consola on es vegi la comanda `icacls` executada correctament.
+![alt text](image-41.png)
 
 ---
 
 ### Pas 30: Verificar que alumne2 no pot modificar
 
-Inicia sessió com a `alumne2` i intenta crear o modificar fitxers dins de `E:\Projectes`.
+He iniciat sessió com a `alumne2` i he intentat crear i modificar fitxers dins de `E:\Projectes`. Windows ha denegat l'acció, confirmant que la configuració de denegació explícita funciona correctament.
 
-Si la configuració és correcta, Windows hauria de denegar l'acció de modificació o d'escriptura.
-
-> 📸 **Captura**: Fes una captura del missatge d'error o de la prova on es vegi que `alumne2` no pot crear o modificar fitxers dins de `E:\Projectes`.
+![alt text](image-42.png)
 
 ---
 
 ### Pas 31: Consultar l'estat final dels permisos amb icacls
 
-Per acabar, executa:
+Finalment, he executat `icacls "E:\Projectes"` per veure l'estat final de totes les entrades ACL de la carpeta:
 
 ```cmd
 icacls "E:\Projectes"
 ```
 
-Amb aquesta comanda podràs veure totes les entrades ACL finals de la carpeta.
+A la sortida es poden identificar els codis de permisos següents:
 
-Pots explicar breument alguns codis habituals:
+- **(F)** = control total (Full control)
+- **(R)** = només lectura (Read)
+- **(W)** = escriptura (Write)
+- **(OI)** = herència cap als fitxers (Object Inherit)
+- **(CI)** = herència cap a les subcarpetes (Container Inherit)
+- **(N)** = denegació explícita (en combinació amb Deny)
 
-- `(F)` = control total;
-- `(R)` = només lectura;
-- `(OI)` = herència cap als fitxers;
-- `(CI)` = herència cap a les subcarpetes.
+Aquí es pot veure com `alumne2` té una entrada de denegació d'escriptura, mentre que el grup `Limitats` manté els seus permisos generals.
 
-> 📸 **Captura**: Fes una captura de la consola amb la sortida final de `icacls "E:\Projectes"`.
+![alt text](image-40.png)
 
 ---
 
 ## Conclusió
 
-Amb aquest sprint has practicat diverses tasques habituals d'administració a Windows: preparar discs, formatar particions amb sistemes de fitxers diferents, limitar espai amb quotes, crear usuaris i grups, automatitzar còpies de seguretat amb scripts, analitzar processos del sistema i configurar permisos avançats amb ACL.
+En aquest sprint he posat en pràctica diverses tasques d'administració a Windows: he preparat discs amb particions NTFS i FAT32, he configurat quotes de disc per limitar l'espai dels usuaris, he creat usuaris i grups locals, he automatitzat còpies de seguretat amb scripts d'inici de sessió, he analitzat i gestionat processos del sistema, i he configurat permisos avançats amb ACL.
 
-També has vist que Windows permet combinar eines gràfiques i eines de consola per administrar el sistema de manera bastant completa.
+Un dels aprenentatges més importants ha estat entendre com funcionen les ACL de Windows: els permisos Allow s'acumulen entre usuari i grup, però les entrades Deny sempre tenen prioritat. Això és clau per aplicar excepcions de seguretat a usuaris concrets dins d'un grup.
+
+També he comprovat que Windows ofereix tant eines gràfiques com de consola per administrar el sistema, i que combinar-les permet un control molt complet.
