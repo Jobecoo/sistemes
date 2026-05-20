@@ -469,7 +469,7 @@ sudo nano /etc/apt/mirror.list
 Deixarem únicament el repositori de `focal main restricted` i el de Google Chrome. Esborra o comenta tota la resta que ve per defecte. T'ha de quedar així:
 
 ```text
-set base_path    /var/spool/apt-mirror
+set base_path    /mnt/raid/apt-mirror
 set mirror_path  $base_path/mirror
 set skel_path    $base_path/skel
 set var_path     $base_path/var
@@ -506,8 +506,8 @@ CAPTURA 30: execucio de `apt-mirror`.
 Per tal que Apache pugui servir tant els repositoris d'Ubuntu com el de Google Chrome, creem els enllacos seguents:
 
 ```bash
-sudo ln -s /var/spool/apt-mirror/mirror/archive.ubuntu.com /var/www/html/archive.ubuntu.com
-sudo ln -s /var/spool/apt-mirror/mirror/dl.google.com /var/www/html/dl.google.com
+sudo ln -s /mnt/raid/apt-mirror/mirror/archive.ubuntu.com /var/www/html/archive.ubuntu.com
+sudo ln -s /mnt/raid/apt-mirror/mirror/dl.google.com /var/www/html/dl.google.com
 ls -la /var/www/html
 ```
 
@@ -602,7 +602,7 @@ CAPTURA 40: execucio de `apt-mirror` descarregant nginx.
 ### Crear l'enllac simbolic per nginx (Al Servidor)
 
 ```bash
-sudo ln -s /var/spool/apt-mirror/mirror/nginx.org /var/www/html/nginx.org
+sudo ln -s /mnt/raid/apt-mirror/mirror/nginx.org /var/www/html/nginx.org
 ls -la /var/www/html
 ```
 
