@@ -254,8 +254,7 @@ sudo nano /etc/rsyslog.d/50-default.conf
 logger -p cron.crit "hola"
 cat /var/log/joan.log
 ```
-
-CAPTURA 20: contingut de `/var/log/joan.log` despres d'enviar un missatge `cron.crit`.
+![alt text](image-17.png)
 
 Si la regla esta ben aplicada, el missatge apareixera en aquest nou fitxer.
 
@@ -271,7 +270,7 @@ Si la regla esta ben aplicada, el missatge apareixera en aquest nou fitxer.
 journalctl -p crit
 ```
 
-CAPTURA 21: sortida de `journalctl -p crit`.
+![alt text](image-18.png)
 
 Aqui s'han de veure tots els esdeveniments de nivell critic o superior.
 
@@ -283,7 +282,7 @@ Aqui s'han de veure tots els esdeveniments de nivell critic o superior.
 journalctl --facility=mail
 ```
 
-CAPTURA 22: sortida de `journalctl --facility=mail`.
+![alt text](image-19.png)
 
 En aquesta consulta haurien d'apareixer les proves que hem enviat amb `logger` usant la facility `mail`.
 
@@ -331,8 +330,7 @@ sudo mkdir -p /var/log/remote
 sudo systemctl restart rsyslog
 ```
 
-CAPTURA 23: contingut de `/etc/rsyslog.d/10-remote.conf`.
-
+![alt text](image-21.png)
 ---
 
 ### Comprovar que el servidor escolta al port 514
@@ -341,7 +339,7 @@ CAPTURA 23: contingut de `/etc/rsyslog.d/10-remote.conf`.
 ss -tulpn | grep 514
 ```
 
-CAPTURA 24: `rsyslog` escoltant als ports 514 UDP i TCP.
+![alt text](image-22.png)
 
 Si la configuracio es correcta, hi hauries de veure entrades per `udp` i `tcp`.
 
@@ -367,7 +365,7 @@ Despres reiniciem `rsyslog`:
 sudo systemctl restart rsyslog
 ```
 
-CAPTURA 25: contingut de `/etc/rsyslog.d/90-forward.conf`.
+![alt text](image-23.png)
 
 Els dos simbols `@@` indiquen enviament via TCP. Si fos UDP, se'n faria servir nomes un (`@`).
 
@@ -379,7 +377,7 @@ Els dos simbols `@@` indiquen enviament via TCP. Si fos UDP, se'n faria servir n
 logger "PROVA"
 ```
 
-CAPTURA 26: enviament del missatge `PROVA` des del client.
+![alt text](image-24.png)
 
 ---
 
@@ -403,7 +401,7 @@ Substitueix el nom pel hostname real del teu client si es diferent:
 ls -la /var/log/remote/joan-VirtualBox
 ```
 
-CAPTURA 28: contingut de la carpeta remota del client.
+![alt text](image-25.png)
 
 En aquesta carpeta hi hauria d'haver el fitxer `syslog.log`.
 
@@ -415,7 +413,7 @@ En aquesta carpeta hi hauria d'haver el fitxer `syslog.log`.
 cat /var/log/remote/joan-VirtualBox/syslog.log
 ```
 
-CAPTURA 29: visualitzacio del `syslog.log` remot amb el missatge `PROVA`.
+![alt text](image-26.png)
 
 Amb aquesta comprovacio confirmem que el servidor centralitza correctament els logs del client.
 
@@ -447,8 +445,7 @@ sudo apt update
 sudo apt install apache2
 ```
 
-CAPTURA 30: instal·lacio d'Apache2.
-
+![alt text](image-27.png)
 ---
 
 ### Instal·lacio de `apt-mirror`
@@ -457,7 +454,7 @@ CAPTURA 30: instal·lacio d'Apache2.
 sudo apt install apt-mirror
 ```
 
-CAPTURA 31: instal·lacio de `apt-mirror`.
+![alt text](image-28.png)
 
 ---
 
@@ -469,7 +466,7 @@ Editem el fitxer de configuracio principal:
 sudo nano /etc/apt/mirror.list
 ```
 
-Pots fer servir una configuracio semblant a aquesta:
+Deixarem únicament el repositori de `focal main restricted` i el de Google Chrome. Esborra o comenta tota la resta que ve per defecte. T'ha de quedar així:
 
 ```text
 set base_path    /var/spool/apt-mirror
@@ -481,20 +478,16 @@ set defaultarch  amd64
 set nthreads     20
 set _tilde 0
 
-deb http://archive.ubuntu.com/ubuntu jammy main restricted universe multiverse
-deb http://archive.ubuntu.com/ubuntu jammy-updates main restricted universe multiverse
-deb http://security.ubuntu.com/ubuntu jammy-security main restricted universe multiverse
-
-deb [arch=amd64] https://dl.google.com/linux/chrome/deb stable main
+deb http://archive.ubuntu.com/ubuntu focal main restricted
+deb http://dl.google.com/linux/chrome/deb/ stable main
 
 clean http://archive.ubuntu.com/ubuntu
-clean http://security.ubuntu.com/ubuntu
-clean https://dl.google.com/linux/chrome/deb
+clean http://dl.google.com/linux/chrome/deb/
 ```
 
-CAPTURA 32: contingut de `/etc/apt/mirror.list`.
+CAPTURA 29: contingut de `mirror.list`.
 
-Abans d'executar el mirall, revisa que els repositoris coincideixen amb els de la practica que t'han demanat a classe.
+Abans d'executar el mirall, revisa que només tens actius aquests repositoris per evitar omplir el disc.
 
 ---
 
@@ -504,9 +497,7 @@ Abans d'executar el mirall, revisa que els repositoris coincideixen amb els de l
 sudo apt-mirror
 ```
 
-CAPTURA 33: execucio de `apt-mirror`.
-
-Aquest proces pot trigar bastant i descarregar centenars de MB o mes d'1 GB, segons la configuracio.
+CAPTURA 30: execucio de `apt-mirror`.
 
 ---
 
@@ -516,7 +507,6 @@ Per tal que Apache pugui servir tant els repositoris d'Ubuntu com el de Google C
 
 ```bash
 sudo ln -s /var/spool/apt-mirror/mirror/archive.ubuntu.com /var/www/html/archive.ubuntu.com
-sudo ln -s /var/spool/apt-mirror/mirror/security.ubuntu.com /var/www/html/security.ubuntu.com
 sudo ln -s /var/spool/apt-mirror/mirror/dl.google.com /var/www/html/dl.google.com
 ls -la /var/www/html
 ```
@@ -533,18 +523,14 @@ Al client, editem:
 sudo nano /etc/apt/sources.list
 ```
 
-Amb una configuracio semblant a aquesta:
+Deixa-ho amb una configuracio semblant a aquesta (substitueix `10.0.2.13` per la IP real del teu servidor mirall):
 
 ```text
-deb http://10.0.2.13/archive.ubuntu.com/ubuntu jammy main restricted universe multiverse
-deb http://10.0.2.13/archive.ubuntu.com/ubuntu jammy-updates main restricted universe multiverse
-deb http://10.0.2.13/security.ubuntu.com/ubuntu jammy-security main restricted universe multiverse
+deb http://10.0.2.13/archive.ubuntu.com/ubuntu focal main restricted
 deb [arch=amd64] http://10.0.2.13/dl.google.com/linux/chrome/deb stable main
 ```
 
-CAPTURA 35: `/etc/apt/sources.list` del client apuntant al mirall local.
-
-Substitueix `10.0.2.13` per la IP real del teu servidor mirall si es diferent.
+CAPTURA 35: `sources.list` del client apuntant al mirall local.
 
 ---
 
@@ -568,7 +554,7 @@ sudo apt update
 
 CAPTURA 37: `apt update` al client usant el servidor intern.
 
-Aqui s'ha de veure que el client descarrega la informacio des de la IP del teu servidor mirall, incloent les rutes `archive.ubuntu.com`, `security.ubuntu.com` i `dl.google.com`.
+Aqui s'ha de veure que el client descarrega la informacio des de la IP del teu servidor mirall.
 
 ---
 
@@ -579,8 +565,6 @@ sudo apt install google-chrome-stable
 ```
 
 CAPTURA 38: instal·lacio de `google-chrome-stable` des del mirall local.
-
-Si el mirall i la configuracio del client son correctes, la descarrega es fara des del servidor intern i no des d'Internet.
 
 ---
 
@@ -594,10 +578,10 @@ Per a l'activitat individual, afegirem un segon repositori al servidor mirall.
 sudo nano /etc/apt/mirror.list
 ```
 
-Afegim la linia del repositori oficial de nginx:
+Afegim la linia del repositori oficial de nginx per a la mateixa versio focal:
 
 ```text
-deb http://nginx.org/packages/ubuntu jammy nginx
+deb http://nginx.org/packages/ubuntu focal nginx
 clean http://nginx.org/packages/ubuntu
 ```
 
@@ -613,8 +597,6 @@ sudo apt-mirror
 
 CAPTURA 40: execucio de `apt-mirror` descarregant nginx.
 
-Aquest segon mirall tambe pot ocupar bastant espai segons els paquets disponibles.
-
 ---
 
 ### Crear l'enllac simbolic per nginx
@@ -624,7 +606,7 @@ sudo ln -s /var/spool/apt-mirror/mirror/nginx.org /var/www/html/nginx.org
 ls -la /var/www/html
 ```
 
-CAPTURA 41: presencia de `dl.google.com` i `nginx.org` dins `/var/www/html`.
+CAPTURA 41: presencia de `dl.google.com`, `archive.ubuntu.com` i `nginx.org` dins `/var/www/html`.
 
 ---
 
@@ -637,7 +619,7 @@ sudo nano /etc/apt/sources.list
 Afegim aquesta linia:
 
 ```text
-deb http://10.0.2.13/nginx.org/packages/ubuntu jammy nginx
+deb http://10.0.2.13/nginx.org/packages/ubuntu focal nginx
 ```
 
 CAPTURA 42: `sources.list` del client amb el repositori de nginx.
@@ -661,8 +643,6 @@ sudo apt update
 ```
 
 CAPTURA 44: `apt update` descarregant la informacio del repositori de nginx des del servidor intern.
-
-En aquesta sortida s'hauria de veure que la font del repositori es la IP del teu servidor mirall.
 
 ---
 
