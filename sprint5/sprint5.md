@@ -235,7 +235,7 @@ Aquesta regla fara que tots els missatges de nivell `crit` es desin tambe a `/va
 
 ```bash
 sudo systemctl restart rsyslog
-logger -p mail.crit "Prova Ferran6"
+logger -p mail.crit "Prova Joan6"
 ```
 ![alt text](image-15.png)
 
@@ -252,10 +252,10 @@ sudo nano /etc/rsyslog.d/50-default.conf
 
 ```bash
 logger -p cron.crit "hola"
-cat /var/log/ferran.log
+cat /var/log/joan.log
 ```
 
-CAPTURA 20: contingut de `/var/log/ferran.log` despres d'enviar un missatge `cron.crit`.
+CAPTURA 20: contingut de `/var/log/joan.log` despres d'enviar un missatge `cron.crit`.
 
 Si la regla esta ben aplicada, el missatge apareixera en aquest nou fitxer.
 
@@ -400,7 +400,7 @@ Dins d'aquest directori hauria d'apareixer una carpeta amb el nom del client.
 Substitueix el nom pel hostname real del teu client si es diferent:
 
 ```bash
-ls -la /var/log/remote/ferranbernis1-VirtualBox
+ls -la /var/log/remote/joan-VirtualBox
 ```
 
 CAPTURA 28: contingut de la carpeta remota del client.
@@ -412,7 +412,7 @@ En aquesta carpeta hi hauria d'haver el fitxer `syslog.log`.
 ### Comprovar que el missatge ha arribat
 
 ```bash
-cat /var/log/remote/ferranbernis1-VirtualBox/syslog.log
+cat /var/log/remote/joan-VirtualBox/syslog.log
 ```
 
 CAPTURA 29: visualitzacio del `syslog.log` remot amb el missatge `PROVA`.
