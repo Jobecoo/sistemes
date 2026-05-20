@@ -438,7 +438,7 @@ En aquesta practica farem servir:
 
 ---
 
-### Instal·lacio d'Apache2 al servidor
+### Instal·lacio d'Apache2 (Al Servidor)
 
 ```bash
 sudo apt update
@@ -448,7 +448,7 @@ sudo apt install apache2
 ![alt text](image-27.png)
 ---
 
-### Instal·lacio de `apt-mirror`
+### Instal·lacio de `apt-mirror` (Al Servidor)
 
 ```bash
 sudo apt install apt-mirror
@@ -458,7 +458,7 @@ sudo apt install apt-mirror
 
 ---
 
-### Configuracio de `/etc/apt/mirror.list`
+### Configuracio de `/etc/apt/mirror.list` (Al Servidor)
 
 Editem el fitxer de configuracio principal:
 
@@ -491,7 +491,7 @@ Abans d'executar el mirall, revisa que només tens actius aquests repositoris pe
 
 ---
 
-### Executar `apt-mirror`
+### Executar `apt-mirror` (Al Servidor)
 
 ```bash
 sudo apt-mirror
@@ -501,7 +501,7 @@ CAPTURA 30: execucio de `apt-mirror`.
 
 ---
 
-### Crear els enllacos simbolics per servir el mirror amb Apache
+### Crear els enllacos simbolics per servir el mirror amb Apache (Al Servidor)
 
 Per tal que Apache pugui servir tant els repositoris d'Ubuntu com el de Google Chrome, creem els enllacos seguents:
 
@@ -515,7 +515,7 @@ CAPTURA 34: enllacos simbolics del mirall dins `/var/www/html`.
 
 ---
 
-### Configuracio del client: repositoris apuntant al servidor intern
+### Configuracio del client: repositoris apuntant al servidor intern (Al Client)
 
 Al client, editem:
 
@@ -534,7 +534,7 @@ CAPTURA 35: `sources.list` del client apuntant al mirall local.
 
 ---
 
-### Afegir la clau GPG de Google al client
+### Afegir la clau GPG de Google (Al Client)
 
 ```bash
 wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
@@ -546,7 +546,7 @@ Tot i que `apt-key` esta obsolet en sistemes moderns, en moltes practiques de la
 
 ---
 
-### Actualitzar la informacio de paquets al client
+### Actualitzar la informacio de paquets (Al Client)
 
 ```bash
 sudo apt update
@@ -558,7 +558,7 @@ Aqui s'ha de veure que el client descarrega la informacio des de la IP del teu s
 
 ---
 
-### Instal·lar Google Chrome des del mirror local
+### Instal·lar Google Chrome des del mirror local (Al Client)
 
 ```bash
 sudo apt install google-chrome-stable
@@ -572,7 +572,7 @@ CAPTURA 38: instal·lacio de `google-chrome-stable` des del mirall local.
 
 Per a l'activitat individual, afegirem un segon repositori al servidor mirall.
 
-### Afegir nginx a `mirror.list`
+### Afegir nginx a `mirror.list` (Al Servidor)
 
 ```bash
 sudo nano /etc/apt/mirror.list
@@ -589,7 +589,7 @@ CAPTURA 39: `mirror.list` amb el repositori de nginx afegit.
 
 ---
 
-### Tornar a executar `apt-mirror`
+### Tornar a executar `apt-mirror` (Al Servidor)
 
 ```bash
 sudo apt-mirror
@@ -599,7 +599,7 @@ CAPTURA 40: execucio de `apt-mirror` descarregant nginx.
 
 ---
 
-### Crear l'enllac simbolic per nginx
+### Crear l'enllac simbolic per nginx (Al Servidor)
 
 ```bash
 sudo ln -s /var/spool/apt-mirror/mirror/nginx.org /var/www/html/nginx.org
@@ -610,7 +610,7 @@ CAPTURA 41: presencia de `dl.google.com`, `archive.ubuntu.com` i `nginx.org` din
 
 ---
 
-### Afegir nginx al `sources.list` del client
+### Afegir nginx al `sources.list` (Al Client)
 
 ```bash
 sudo nano /etc/apt/sources.list
@@ -626,7 +626,7 @@ CAPTURA 42: `sources.list` del client amb el repositori de nginx.
 
 ---
 
-### Afegir la clau GPG de nginx al client
+### Afegir la clau GPG de nginx (Al Client)
 
 ```bash
 wget -q -O - https://nginx.org/keys/nginx_signing.key | sudo apt-key add -
@@ -636,7 +636,7 @@ CAPTURA 43: importacio de la clau GPG de nginx.
 
 ---
 
-### Actualitzar paquets des del client
+### Actualitzar paquets (Al Client)
 
 ```bash
 sudo apt update
@@ -646,7 +646,7 @@ CAPTURA 44: `apt update` descarregant la informacio del repositori de nginx des 
 
 ---
 
-### Instal·lar `nginx` des del mirror local
+### Instal·lar `nginx` des del mirror local (Al Client)
 
 ```bash
 sudo apt install nginx
